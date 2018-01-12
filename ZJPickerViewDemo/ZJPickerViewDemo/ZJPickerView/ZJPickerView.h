@@ -14,7 +14,8 @@
 
 + (instancetype)zj_PickerView;
 
-- (void)show:(void(^)(NSString *selectContent))complete;
-- (void)hide;
+- (void)zj_showWithDataList:(NSArray *)dataList
+                   complete:(void(^)(NSString *selectContent))complete;
+- (void)zj_hide;
 
 @end

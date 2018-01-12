@@ -24,7 +24,7 @@
 + (instancetype)zj_PickerView
 {
     ZJPickerView *pickerView = [[NSBundle mainBundle] loadNibNamed:NSStringFromClass([self class]) owner:self options:nil].firstObject;
-    pickerView.frame = CGRectMake(0, 0, mainScreenWidth, mainScreenHeight);
+    pickerView.frame = CGRectMake(0, 0, [UIScreen mainScreen].applicationFrame.size.width, [UIScreen mainScreen].applicationFrame.size.height);
     return pickerView;
 }
 
@@ -48,7 +48,7 @@
             _component++;
             [self handleDictDataList:dataList];
         } else {
-            NSLog(@"数据格式不正确");
+            NSLog(@"ZJPickerView：数据格式不正确");
         }
     }
 }
@@ -116,10 +116,19 @@
     return [self getDataWithComponent:component].count;
 }
 
-//每行的标题
+// 每行的标题
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-    return [self getDataWithComponent:component][row];
+    NSArray *componentArray = [self getDataWithComponent:component];
+    if (componentArray.count) {
+        id titleData = componentArray[row];
+        if ([titleData isKindOfClass:[NSString class]]) {
+            return titleData;
+        } else if ([titleData isKindOfClass:[NSNumber class]]) {
+            return [NSString stringWithFormat:@"%@", titleData];
+        }
+    }
+    return @"";
 }
 
 // 选中时回调的委托方法
@@ -138,24 +147,24 @@
     NSString *normalRowString = [self pickerView:pickerView titleForRow:row forComponent:component];
     NSString *selectRowString = [self pickerView:pickerView titleForRow:[pickerView selectedRowInComponent:component] forComponent:component];
     if (row == [pickerView selectedRowInComponent:component]) {
-        return [[NSAttributedString alloc] initWithString:selectRowString attributes:@{NSForegroundColorAttributeName : [UIColor colorWithHexString:@"#434343"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]}];
+        return [[NSAttributedString alloc] initWithString:selectRowString attributes:@{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]}];
     } else {
-        return [[NSAttributedString alloc] initWithString:normalRowString attributes:@{NSForegroundColorAttributeName : [UIColor colorWithHexString:@"#919191"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]}];
+        return [[NSAttributedString alloc] initWithString:normalRowString attributes:@{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]}];
     }
 }
 
 #pragma mark 取消、确定
 - (IBAction)userAction:(UIButton *)sender
 {
-    [self hide];
+    [self zj_hide];
     
     // 确定
     if (sender.tag == 1) {
         NSMutableString *selectString = [[NSMutableString alloc] init];
         for (NSUInteger i = 0; i < _component; i++) {
             [selectString appendString:[self pickerView:self.pickerView titleForRow:[self.pickerView selectedRowInComponent:i] forComponent:i]];
-            if (i != _component - 1) {
-                [selectString appendString:@"/"];
+            if (i != _component - 1) { // 多行用 "," 分割
+                [selectString appendString:@","];
             }
         }
         
@@ -165,8 +174,18 @@
     }
 }
 
-- (void)show:(void(^)(NSString *selectContent))complete
+- (void)zj_showWithDataList:(NSArray *)dataList
+                   complete:(void(^)(NSString *selectContent))complete
 {
+    if (dataList) {
+        self.dataList = dataList;
+    }
+    
+    // 无数据
+    if (!self.dataList || self.dataList.count == 0) {
+        return;
+    }
+    
     if (complete) {
         _complete = complete;
     }
@@ -174,7 +193,7 @@
     [[[[UIApplication sharedApplication] delegate] window] addSubview:self];
 }
 
-- (void)hide
+- (void)zj_hide
 {
     [self removeFromSuperview];
 }
