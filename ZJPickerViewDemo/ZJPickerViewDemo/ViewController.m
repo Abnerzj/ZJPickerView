@@ -41,19 +41,24 @@
     // 1.1.2 NSNumber
 //    NSArray *numberDataList = @[@22, @88, @188, @288, @388];
     
-    // 1.2 多列数据，只支持字典数据(multi component Data)
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"cityData" ofType:@"plist"];
+    // 1.2 多列数据(multi component Data)
+    // 1.2.1 NSDictionary
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"CityData" ofType:@"plist"];
     NSDictionary *cityNamesDict = [NSDictionary dictionaryWithContentsOfFile:path];
     NSMutableArray *dictDataList = [NSMutableArray arrayWithCapacity:cityNamesDict.allKeys.count];
     [cityNamesDict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
         [dictDataList addObject:@{key : obj}];
     }];
     
+    // 1.2.2 NSArray
+    NSString *path2 = [[NSBundle mainBundle] pathForResource:@"CityData2" ofType:@"plist"];
+    NSArray *arrayDataList = [NSArray arrayWithContentsOfFile:path2];
+    
     // 2.属性(Property)
     
     
     // 3.显示
-    [[ZJPickerView zj_PickerView] zj_showWithDataList:dictDataList complete:^(NSString *selectContent) {
+    [[ZJPickerView zj_PickerView] zj_showWithDataList:arrayDataList complete:^(NSString *selectContent) {
         NSLog(@"%@", selectContent);
     }];
 }

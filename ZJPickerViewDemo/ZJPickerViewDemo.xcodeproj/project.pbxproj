@@ -17,8 +17,9 @@
 		9A7EB2522008B6E700A991E2 /* ZJPickerViewDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB2512008B6E700A991E2 /* ZJPickerViewDemoUITests.m */; };
 		9A7EB2632008B8FB00A991E2 /* ZJPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB2612008B8FB00A991E2 /* ZJPickerView.m */; };
 		9A7EB2642008B8FB00A991E2 /* ZJPickerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9A7EB2622008B8FB00A991E2 /* ZJPickerView.xib */; };
-		9AEBE3562008C7EB00AB2788 /* cityData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBE3552008C7EB00AB2788 /* cityData.plist */; };
+		9AEBE3562008C7EB00AB2788 /* CityData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBE3552008C7EB00AB2788 /* CityData.plist */; };
 		9AEBE3592008CC2B00AB2788 /* ZJPickerViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9AEBE3582008CC2B00AB2788 /* ZJPickerViewModel.m */; };
+		9AEBE35B2008D2DD00AB2788 /* CityData2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBE35A2008D2DD00AB2788 /* CityData2.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,9 +59,10 @@
 		9A7EB2602008B8FB00A991E2 /* ZJPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJPickerView.h; sourceTree = "<group>"; };
 		9A7EB2612008B8FB00A991E2 /* ZJPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJPickerView.m; sourceTree = "<group>"; };
 		9A7EB2622008B8FB00A991E2 /* ZJPickerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ZJPickerView.xib; sourceTree = "<group>"; };
-		9AEBE3552008C7EB00AB2788 /* cityData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = cityData.plist; sourceTree = "<group>"; };
+		9AEBE3552008C7EB00AB2788 /* CityData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CityData.plist; sourceTree = "<group>"; };
 		9AEBE3572008CC2B00AB2788 /* ZJPickerViewModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZJPickerViewModel.h; sourceTree = "<group>"; };
 		9AEBE3582008CC2B00AB2788 /* ZJPickerViewModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZJPickerViewModel.m; sourceTree = "<group>"; };
+		9AEBE35A2008D2DD00AB2788 /* CityData2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CityData2.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,7 +123,8 @@
 				9A7EB2382008B6E700A991E2 /* LaunchScreen.storyboard */,
 				9A7EB23B2008B6E700A991E2 /* Info.plist */,
 				9A7EB23C2008B6E700A991E2 /* main.m */,
-				9AEBE3552008C7EB00AB2788 /* cityData.plist */,
+				9AEBE3552008C7EB00AB2788 /* CityData.plist */,
+				9AEBE35A2008D2DD00AB2788 /* CityData2.plist */,
 			);
 			path = ZJPickerViewDemo;
 			sourceTree = "<group>";
@@ -264,8 +267,9 @@
 			files = (
 				9A7EB23A2008B6E700A991E2 /* LaunchScreen.storyboard in Resources */,
 				9A7EB2372008B6E700A991E2 /* Assets.xcassets in Resources */,
-				9AEBE3562008C7EB00AB2788 /* cityData.plist in Resources */,
+				9AEBE3562008C7EB00AB2788 /* CityData.plist in Resources */,
 				9A7EB2642008B8FB00A991E2 /* ZJPickerView.xib in Resources */,
+				9AEBE35B2008D2DD00AB2788 /* CityData2.plist in Resources */,
 				9A7EB2352008B6E700A991E2 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
