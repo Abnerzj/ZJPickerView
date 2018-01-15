@@ -83,15 +83,15 @@
                                    ZJPickerViewPropertySureBtnTitleKey  : @"确定",
                                    ZJPickerViewPropertyTipLabelTextKey  : @"提示内容",
                                    ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
-                                   ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF69B4"],
-                                   ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
+                                   ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
+                                   ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#231F20"],
                                    ZJPickerViewPropertyLineViewBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
                                    ZJPickerViewPropertyCanceBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
                                    ZJPickerViewPropertySureBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
                                    ZJPickerViewPropertyTipLabelTextFontKey : [UIFont systemFontOfSize:17.0f],
                                    ZJPickerViewPropertyPickerViewHeightKey : @300.0f,
                                    ZJPickerViewPropertyOneComponentRowHeightKey : @40.0f,
-                                   ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF69B4"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
+                                   ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF6347"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
                                    ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
                                    ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
@@ -146,7 +146,8 @@
     _dataList = @[@{@"title" : @"One component-->NSString(单列数据)", @"dataList" : stringDataList},
                   @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
                   @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
-                  @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList}];
+                  @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList},
+                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : [self getAreaData]}];
     
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_selectContentLabel.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(_selectContentLabel.frame)) style:UITableViewStyleGrouped];
     _tableView.separatorInset = UIEdgeInsetsZero;
@@ -155,10 +156,59 @@
     [self.view addSubview:_tableView];
 }
 
+- (NSMutableArray *)getAreaData
+{
+    NSMutableArray *areaDataArray = [NSMutableArray array];
+    NSString *path = [[NSBundle mainBundle] pathForResource:@"CityData3" ofType:@"txt"];
+    NSString *areaString = [[NSString alloc] initWithContentsOfFile:path encoding:NSUTF8StringEncoding error:nil];
+    if (areaString && ![areaString isEqualToString:@""]) {
+        NSError *error = nil;
+        NSArray *areaStringArray = [NSJSONSerialization JSONObjectWithData:[areaString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
+        if (areaStringArray && areaStringArray.count) {
+            [areaStringArray enumerateObjectsUsingBlock:^(NSDictionary *currentProviceDict, NSUInteger idx, BOOL * _Nonnull stop) {
+                // 省份
+                NSMutableDictionary *proviceDict = [NSMutableDictionary dictionary];
+                NSString *proviceName = currentProviceDict[@"name"];
+                NSArray *cityArray = currentProviceDict[@"childs"];
+                
+                // 城市
+                NSMutableArray *tempCityArray = [NSMutableArray arrayWithCapacity:cityArray.count];
+                [cityArray enumerateObjectsUsingBlock:^(NSDictionary *currentCityDict, NSUInteger idx, BOOL * _Nonnull stop) {
+                    NSMutableDictionary *cityDict = [NSMutableDictionary dictionary];
+                    NSString *cityName = currentCityDict[@"name"];
+                    NSArray *countryArray = currentCityDict[@"childs"];
+                    
+                    // 县城
+                    NSMutableArray *tempCountryArray = [NSMutableArray arrayWithCapacity:countryArray.count];
+                    if (countryArray) {
+                        [countryArray enumerateObjectsUsingBlock:^(NSDictionary *currentCountryDict, NSUInteger idx, BOOL * _Nonnull stop) {
+                            [tempCountryArray addObject:currentCountryDict[@"name"]];
+                        }];
+                        
+                        if (cityName) {
+                            [cityDict setObject:tempCountryArray forKey:cityName];
+                            [tempCityArray addObject:cityDict];
+                        }
+                    } else {
+                        [tempCityArray addObject:cityName];
+                    }
+                }];
+                
+                if (proviceName && cityArray) {
+                    [proviceDict setObject:tempCityArray forKey:proviceName];
+                    [areaDataArray addObject:proviceDict];
+                }
+            }];
+        } else {
+            NSLog(@"解析错误");
+        }
+    }
+    return areaDataArray;
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
 
 @end
