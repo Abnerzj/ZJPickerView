@@ -147,7 +147,7 @@
                   @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
                   @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
                   @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList},
-                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : [self getAreaData]}];
+                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : [self getCityData]}];
     
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_selectContentLabel.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(_selectContentLabel.frame)) style:UITableViewStyleGrouped];
     _tableView.separatorInset = UIEdgeInsetsZero;
@@ -156,7 +156,7 @@
     [self.view addSubview:_tableView];
 }
 
-- (NSMutableArray *)getAreaData
+- (NSMutableArray *)getCityData
 {
     NSMutableArray *areaDataArray = [NSMutableArray array];
     NSString *path = [[NSBundle mainBundle] pathForResource:@"CityData3" ofType:@"txt"];
@@ -166,19 +166,16 @@
         NSArray *areaStringArray = [NSJSONSerialization JSONObjectWithData:[areaString dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingAllowFragments error:&error];
         if (areaStringArray && areaStringArray.count) {
             [areaStringArray enumerateObjectsUsingBlock:^(NSDictionary *currentProviceDict, NSUInteger idx, BOOL * _Nonnull stop) {
-                // 省份
                 NSMutableDictionary *proviceDict = [NSMutableDictionary dictionary];
                 NSString *proviceName = currentProviceDict[@"name"];
                 NSArray *cityArray = currentProviceDict[@"childs"];
                 
-                // 城市
                 NSMutableArray *tempCityArray = [NSMutableArray arrayWithCapacity:cityArray.count];
                 [cityArray enumerateObjectsUsingBlock:^(NSDictionary *currentCityDict, NSUInteger idx, BOOL * _Nonnull stop) {
                     NSMutableDictionary *cityDict = [NSMutableDictionary dictionary];
                     NSString *cityName = currentCityDict[@"name"];
                     NSArray *countryArray = currentCityDict[@"childs"];
                     
-                    // 县城
                     NSMutableArray *tempCountryArray = [NSMutableArray arrayWithCapacity:countryArray.count];
                     if (countryArray) {
                         [countryArray enumerateObjectsUsingBlock:^(NSDictionary *currentCountryDict, NSUInteger idx, BOOL * _Nonnull stop) {
