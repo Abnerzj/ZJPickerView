@@ -102,6 +102,7 @@
     [ZJPickerView zj_showWithDataList:dataList propertyDict:propertyDict completion:^(NSString *selectContent) {
         NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
 
+        // show select content
         NSArray *selectStrings = [selectContent componentsSeparatedByString:@","];
         NSMutableString *selectStringCollection = [[NSMutableString alloc] initWithString:@"选择内容："];
         [selectStrings enumerateObjectsUsingBlock:^(NSString *selectString, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -115,6 +116,7 @@
 
 - (void)initDataAndSubViews
 {
+    // 1.选择内容(selected content)
     _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 64.0f, self.view.frame.size.width, 44.0f)];
     _selectContentLabel.text = @"选择内容：";
     _selectContentLabel.textColor = [UIColor brownColor];
@@ -123,15 +125,15 @@
     _selectContentLabel.numberOfLines = 0;
     [self.view addSubview:_selectContentLabel];
     
-    // 1.获取数据(get data)
-    // 1.1 单列数据(one component Data)
-    // 1.1.1 NSString
+    // 2.获取数据(get data)
+    // 2.1 单列数据(one component Data)
+    // 2.1.1 NSString
     NSArray *stringDataList = @[@"北京", @"上海", @"深圳", @"广州", @"成都"];
-    // 1.1.2 NSNumber
+    // 2.1.2 NSNumber
     NSArray *numberDataList = @[@22, @88, @188, @288, @388];
     
-    // 1.2 多列数据(multi component Data)
-    // 1.2.1 NSDictionary
+    // 2.2 多列数据(multi component Data)
+    // 2.2.1 NSDictionary
     NSString *path = [[NSBundle mainBundle] pathForResource:@"CityData" ofType:@"plist"];
     NSDictionary *cityNamesDict = [NSDictionary dictionaryWithContentsOfFile:path];
     NSMutableArray *dictDataList = [NSMutableArray arrayWithCapacity:cityNamesDict.allKeys.count];
@@ -139,16 +141,20 @@
         [dictDataList addObject:@{key : obj}];
     }];
     
-    // 1.2.2 NSArray
+    // 2.2.2 NSArray
     NSString *path2 = [[NSBundle mainBundle] pathForResource:@"CityData2" ofType:@"plist"];
     NSArray *arrayDataList = [NSArray arrayWithContentsOfFile:path2];
+    
+    // 2.2.3 任意列数据(arbitrary component Data)
+    NSArray *arbitraryDataList = [self getCityData];
     
     _dataList = @[@{@"title" : @"One component-->NSString(单列数据)", @"dataList" : stringDataList},
                   @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
                   @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
                   @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList},
-                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : [self getCityData]}];
+                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : arbitraryDataList}];
     
+    // 3.tableView
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_selectContentLabel.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(_selectContentLabel.frame)) style:UITableViewStyleGrouped];
     _tableView.separatorInset = UIEdgeInsetsZero;
     _tableView.dataSource = self;
