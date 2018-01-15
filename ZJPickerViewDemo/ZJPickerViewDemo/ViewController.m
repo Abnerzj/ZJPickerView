@@ -8,8 +8,14 @@
 
 #import "ViewController.h"
 #import "ZJPickerView.h"
+#import "UIColor+ZJ.h"
 
-@interface ViewController ()
+@interface ViewController ()<UITableViewDataSource, UITableViewDelegate>
+{
+    UILabel *_selectContentLabel;
+    UITableView *_tableView;
+    NSArray *_dataList;
+}
 
 @end
 
@@ -19,27 +25,110 @@
 {
     [super viewDidLoad];
     
-    UIButton *normalBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [self initDataAndSubViews];
+}
+
+#pragma mark - UITableView DataSource & Delegate
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 1;
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return _dataList.count;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    static NSString *ID = @"ZJPickerViewCell";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:ID];
+    if (!cell) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    }
     
-    normalBtn.frame = CGRectMake(100, 100, 100, 100);
-    [normalBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [normalBtn setTitleColor:[UIColor whiteColor]  forState:UIControlStateHighlighted];
-    [normalBtn setTitle:@"显示" forState:UIControlStateNormal];
-    [normalBtn setBackgroundColor:[UIColor orangeColor]];
-    [normalBtn addTarget:self action:@selector(showPickerView) forControlEvents:UIControlEventTouchUpInside];
+    if (indexPath.row >= 0 && indexPath.row < _dataList.count) {
+        NSDictionary *dict = _dataList[indexPath.row];
+        cell.textLabel.text = dict[@"title"];
+    }
     
-    [self.view addSubview:normalBtn];
+    return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row >= 0 && indexPath.row < _dataList.count) {
+        NSDictionary *dict = _dataList[indexPath.row];
+        NSArray *dataList = dict[@"dataList"];
+        [self showPickerViewWithDataList:dataList];
+    }
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
+{
+    return 30.0f;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 44.0f;
 }
 
 #pragma mark 显示选择控制器
-- (void)showPickerView
+- (void)showPickerViewWithDataList:(NSArray *)dataList
 {
+    // 1.Custom propery（自定义属性）
+    NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
+                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
+                                   ZJPickerViewPropertyTipLabelTextKey  : @"提示内容",
+                                   ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
+                                   ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF69B4"],
+                                   ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
+                                   ZJPickerViewPropertyLineViewBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
+                                   ZJPickerViewPropertyCanceBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
+                                   ZJPickerViewPropertySureBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
+                                   ZJPickerViewPropertyTipLabelTextFontKey : [UIFont systemFontOfSize:17.0f],
+                                   ZJPickerViewPropertyPickerViewHeightKey : @300.0f,
+                                   ZJPickerViewPropertyOneComponentRowHeightKey : @40.0f,
+                                   ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF69B4"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
+                                   ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
+                                   ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
+                                   ZJPickerViewPropertyIsShowSelectContentKey : @YES,
+                                   ZJPickerViewPropertyIsAnimationShowKey : @YES};
+    
+    // 2.Show（显示）
+    __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel;
+    [ZJPickerView zj_showWithDataList:dataList propertyDict:propertyDict completion:^(NSString *selectContent) {
+        NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+
+        NSArray *selectStrings = [selectContent componentsSeparatedByString:@","];
+        NSMutableString *selectStringCollection = [[NSMutableString alloc] initWithString:@"选择内容："];
+        [selectStrings enumerateObjectsUsingBlock:^(NSString *selectString, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (selectString.length && ![selectString isEqualToString:@""]) {
+                [selectStringCollection appendString:selectString];
+            }
+        }];
+        weak_selectContentLabel.text = selectStringCollection;
+    }];
+}
+
+- (void)initDataAndSubViews
+{
+    _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 64.0f, self.view.frame.size.width, 44.0f)];
+    _selectContentLabel.text = @"选择内容：";
+    _selectContentLabel.textColor = [UIColor brownColor];
+    _selectContentLabel.font = [UIFont systemFontOfSize:17.0f];
+    _selectContentLabel.textAlignment = NSTextAlignmentCenter;
+    _selectContentLabel.numberOfLines = 0;
+    [self.view addSubview:_selectContentLabel];
+    
     // 1.获取数据(get data)
     // 1.1 单列数据(one component Data)
     // 1.1.1 NSString
-//    NSArray *stringDataList = @[@"北京", @"上海", @"深圳", @"广州", @"成都"];
+    NSArray *stringDataList = @[@"北京", @"上海", @"深圳", @"广州", @"成都"];
     // 1.1.2 NSNumber
-//    NSArray *numberDataList = @[@22, @88, @188, @288, @388];
+    NSArray *numberDataList = @[@22, @88, @188, @288, @388];
     
     // 1.2 多列数据(multi component Data)
     // 1.2.1 NSDictionary
@@ -54,13 +143,16 @@
     NSString *path2 = [[NSBundle mainBundle] pathForResource:@"CityData2" ofType:@"plist"];
     NSArray *arrayDataList = [NSArray arrayWithContentsOfFile:path2];
     
-    // 2.属性(Property)
+    _dataList = @[@{@"title" : @"One component-->NSString(单列数据)", @"dataList" : stringDataList},
+                  @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
+                  @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
+                  @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList}];
     
-    
-    // 3.显示
-    [[ZJPickerView zj_PickerView] zj_showWithDataList:arrayDataList complete:^(NSString *selectContent) {
-        NSLog(@"%@", selectContent);
-    }];
+    _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_selectContentLabel.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(_selectContentLabel.frame)) style:UITableViewStyleGrouped];
+    _tableView.separatorInset = UIEdgeInsetsZero;
+    _tableView.dataSource = self;
+    _tableView.delegate = self;
+    [self.view addSubview:_tableView];
 }
 
 - (void)didReceiveMemoryWarning {

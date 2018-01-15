@@ -17,7 +17,6 @@
     if (dict) {
         model.name = dict.allKeys.firstObject;
         
-        // 有子数据
         id modelValue = dict[model.name];
         if (modelValue) {
             if ([modelValue isKindOfClass:[NSArray class]]) {
