@@ -81,7 +81,7 @@
     // 1.Custom propery（自定义属性）
     NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
                                    ZJPickerViewPropertySureBtnTitleKey  : @"确定",
-                                   ZJPickerViewPropertyTipLabelTextKey  : @"提示内容",
+                                   ZJPickerViewPropertyTipLabelTextKey  : [_selectContentLabel.text substringFromIndex:5], // @"提示内容"
                                    ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
                                    ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
                                    ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#231F20"],
@@ -95,6 +95,7 @@
                                    ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
                                    ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
+                                   ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
                                    ZJPickerViewPropertyIsAnimationShowKey : @YES};
     
     // 2.Show（显示）
@@ -128,9 +129,9 @@
     // 2.获取数据(get data)
     // 2.1 单列数据(one component Data)
     // 2.1.1 NSString
-    NSArray *stringDataList = @[@"北京", @"上海", @"深圳", @"广州", @"成都"];
+    NSArray *stringDataList = @[@"IT", @"销售", @"自媒体", @"游戏主播", @"产品策划"];
     // 2.1.2 NSNumber
-    NSArray *numberDataList = @[@22, @88, @188, @288, @388];
+    NSArray *numberDataList = @[@22, @88, @188, @288, @688];
     
     // 2.2 多列数据(multi component Data)
     // 2.2.1 NSDictionary
@@ -152,7 +153,7 @@
                   @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
                   @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
                   @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList},
-                  @{@"title" : @"Multi component-->NSArray(三列数据)", @"dataList" : arbitraryDataList}];
+                  @{@"title" : @"Multi component-->NSArray(任意列数据)", @"dataList" : arbitraryDataList}];
     
     // 3.tableView
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_selectContentLabel.frame), self.view.frame.size.width, self.view.frame.size.height - CGRectGetMaxY(_selectContentLabel.frame)) style:UITableViewStyleGrouped];

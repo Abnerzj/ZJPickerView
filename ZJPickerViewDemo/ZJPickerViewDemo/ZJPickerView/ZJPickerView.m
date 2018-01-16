@@ -38,6 +38,7 @@ NSString * const ZJPickerViewPropertyUnSelectRowTitleAttrKey = @"ZJPickerViewPro
 // other: BOOL type
 NSString * const ZJPickerViewPropertyIsTouchBackgroundHideKey = @"ZJPickerViewPropertyIsTouchBackgroundHideKey";
 NSString * const ZJPickerViewPropertyIsShowSelectContentKey = @"ZJPickerViewPropertyIsShowSelectContentKey";
+NSString * const ZJPickerViewPropertyIsScrollToSelectedRowKey = @"ZJPickerViewPropertyIsScrollToSelectedRowKey";
 NSString * const ZJPickerViewPropertyIsAnimationShowKey = @"ZJPickerViewPropertyIsAnimationShowKey";
 // CGFloat type
 NSString * const ZJPickerViewPropertyBackgroundAlphaKey = @"ZJPickerViewPropertyBackgroundAlphaKey";
@@ -60,6 +61,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 
 @property (nonatomic, assign) BOOL isTouchBackgroundHide; // touch background is hide, default NO
 @property (nonatomic, assign) BOOL isShowSelectContent; // scroll component is update and show select content in tipLabel, default NO
+@property (nonatomic, assign) BOOL isScrollToSelectedRow; // pickerView will show scroll to selected row, default NO
 @property (nonatomic, assign) BOOL isAnimationShow; // show pickerView is need Animation, default YES
 @property (nonatomic, assign) CGFloat backgroundAlpha; // background alpha, default 0.5(0.0~1.0)
 @property (nonatomic, copy) void(^completion)(NSString * _Nullable  selectContent); // select content
@@ -105,6 +107,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     
     self.isTouchBackgroundHide = NO;
     self.isShowSelectContent = NO;
+    self.isScrollToSelectedRow = NO;
     self.isAnimationShow = YES;
     self.backgroundAlpha = 0.5f;
 }
@@ -308,10 +311,14 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
         return;
     }
     
-    // scorll all component to top
+    // scorll all component to selectedRow/top
     [[self sharedView].pickerView reloadAllComponents];
-    for (NSUInteger i = 0; i < [self sharedView].component; i++) {
-        [[self sharedView].pickerView selectRow:0 inComponent:i animated:NO];
+    if ([[self sharedView] isShowSelectContent] && [self sharedView].isScrollToSelectedRow) {
+        [[self sharedView] scrollToSelectedRow];
+    } else {
+        for (NSUInteger i = 0; i < [self sharedView].component; i++) {
+            [[self sharedView].pickerView selectRow:0 inComponent:i animated:NO];
+        }
     }
     
     // complete block
@@ -461,6 +468,8 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
             } else if ([key isEqualToString:ZJPickerViewPropertyIsShowSelectContentKey]) {
                 self.isShowSelectContent = [obj boolValue];
                 self.tipLabel.hidden = !self.isShowSelectContent;
+            } else if ([key isEqualToString:ZJPickerViewPropertyIsScrollToSelectedRowKey]) {
+                self.isScrollToSelectedRow = [obj boolValue];
             } else if ([key isEqualToString:ZJPickerViewPropertyBackgroundAlphaKey]) {
                 self.backgroundAlpha = [obj floatValue];
                 self.backgroundView.alpha = self.backgroundAlpha;
@@ -469,6 +478,44 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
             }
         }
     }];
+}
+
+- (void)scrollToSelectedRow
+{
+    NSString *selectedContent = self.propertyDict[ZJPickerViewPropertyTipLabelTextKey];
+    if (selectedContent.length && ![selectedContent isEqualToString:@""]) {
+        __weak typeof(self) weakself = self;
+        NSMutableArray *tempSelectedRowArray = [NSMutableArray arrayWithCapacity:self.component];
+        for (NSUInteger i = 0; i < self.component; i++) {
+            NSArray *componentArray = [self getDataWithComponent:i];
+            if (componentArray.count) {
+                [componentArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    NSString *title = @"";
+                    if ([obj isKindOfClass:[NSString class]]) {
+                        title = obj;
+                    } else if ([obj isKindOfClass:[NSNumber class]]) {
+                        title = [NSString stringWithFormat:@"%@", obj];
+                    }
+                    if (![title isEqualToString:@""]) {
+                        NSRange range = [selectedContent rangeOfString:title];
+                        if (range.location != NSNotFound) {
+                            [tempSelectedRowArray addObject:@(idx)];
+                            [weakself.pickerView reloadComponent:i];
+                            [weakself.pickerView selectRow:idx inComponent:i animated:NO];
+                            [weakself.pickerView reloadComponent:i];
+                            *stop = YES;
+                        }
+                    }
+                }];
+            }
+        }
+        
+        if (tempSelectedRowArray.count != self.component) {
+            for (NSUInteger i = 0; i < self.component; i++) {
+                [self.pickerView selectRow:0 inComponent:i animated:NO];
+            }
+        }
+    }
 }
 
 @end
