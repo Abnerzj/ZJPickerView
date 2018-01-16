@@ -44,7 +44,7 @@ ZJPickerView.m
 ## Direct Use【直接使用】
 ```objc
 [ZJPickerView zj_showWithDataList:@[@"IT", @"销售", @"自媒体", @"游戏主播", @"产品策划"] propertyDict:nil completion:^(NSString *selectContent) {
-NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+    NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
 }];
 ```
 ## User-defined properties【自定义想要的PickerView】
@@ -107,7 +107,7 @@ ZJPickerViewPropertyIsAnimationShowKey : @YES};
 // 2.Show（显示）
 __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel;
 [ZJPickerView zj_showWithDataList:dataList propertyDict:propertyDict completion:^(NSString *selectContent) {
-NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+    NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
 }];
 ```
 
