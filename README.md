@@ -19,7 +19,7 @@
 - 一行代码即可集成。
 - 支持**任意列**数据联动展示。
 - 支持自定义界面中子控件的**文字颜色**、**文字字体**。
-- 支持自定义PickerView的属性：PickerView的高度、PickerView一行的高度、选中内容和未选中内容**文字属性**。
+- 支持自定义PickerView的属性：PickerView的高度、PickerView一行的高度、选中内容和未选中内容**文字属性**、选中行分割线背景颜色。
 - 支持自定义**背景透明度**和是否接收背景触摸事件。
 - 支持选择完内容回调，每一列选中的值用逗号分隔开。
 - 支持已选择内容是否展示在标题上及展示时是否默认滚动到已选择内容那一行。
@@ -59,7 +59,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextKey;  // tipLab
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleColorKey; // cance button Title color（取消按钮文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertySureBtnTitleColorKey;  // sure button Title color（确定按钮文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextColorKey;  // tipLabel text color（选择提示标签文字颜色）
-extern NSString * _Nonnull const ZJPickerViewPropertyLineViewBackgroundColorKey;  // lineView backgroundColor（分割线背景颜色）
+extern NSString * _Nonnull const ZJPickerViewPropertyLineViewBackgroundColorKey;  // lineView backgroundColor（顶部工具条分割线背景颜色）
 
 // font: UIFont type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleFontKey; // cance button label font, default 17.0f（取消按钮字体大小）
@@ -70,11 +70,14 @@ extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextFontKey;  // ti
 // CGFloat type
 extern NSString * _Nonnull const ZJPickerViewPropertyPickerViewHeightKey;  // pickerView height, default 224 pt（pickerView高度）
 extern NSString * _Nonnull const ZJPickerViewPropertyOneComponentRowHeightKey;  // one component row height, default 32 pt（pickerView一行的高度）
-// NSDictionary
+// NSDictionary type
 extern NSString * _Nonnull const ZJPickerViewPropertySelectRowTitleAttrKey;  // select row titlt attribute（pickerView当前选中的文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertyUnSelectRowTitleAttrKey;  // unSelect row titlt attribute（pickerView当前没有选中的文字颜色）
+// UIColor type
+extern NSString * _Nonnull const ZJPickerViewPropertySelectRowLineBackgroundColorKey;  // select row top and bottom line backgroundColor（选中行顶部和底部分割线背景颜色）
 
-// other: BOOL type
+// other:
+// BOOL type
 extern NSString * _Nonnull const ZJPickerViewPropertyIsTouchBackgroundHideKey;  // touch background is hide, default NO（是否点击背景隐藏）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsShowSelectContentKey;  // scroll component is update and show select content in tipLabel, default NO（选择内容后是否更新选择提示标签）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsScrollToSelectedRowKey;  // when pickerView will show scroll to selected row, default NO. note:`ZJPickerViewPropertyTipLabelTextKey` Must pass by value（将要显示时是否滚动到已选择内容那一行，注意，选择提示标签tipLabel必须传内容，比如之前选择了`北京`，此时就需要传入`北京`）
@@ -86,23 +89,24 @@ extern NSString * _Nonnull const ZJPickerViewPropertyBackgroundAlphaKey;  // bac
 // 使用
 // 1.Custom propery（自定义属性）
 NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
-ZJPickerViewPropertySureBtnTitleKey  : @"确定",
-ZJPickerViewPropertyTipLabelTextKey  : [_selectContentLabel.text substringFromIndex:5], // @"提示内容"
-ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
-ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
-ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#231F20"],
-ZJPickerViewPropertyLineViewBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
-ZJPickerViewPropertyCanceBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
-ZJPickerViewPropertySureBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
-ZJPickerViewPropertyTipLabelTextFontKey : [UIFont systemFontOfSize:17.0f],
-ZJPickerViewPropertyPickerViewHeightKey : @300.0f,
-ZJPickerViewPropertyOneComponentRowHeightKey : @40.0f,
-ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF6347"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
-ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
-ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
-ZJPickerViewPropertyIsShowSelectContentKey : @YES,
-ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
-ZJPickerViewPropertyIsAnimationShowKey : @YES};
+                            ZJPickerViewPropertySureBtnTitleKey  : @"确定",
+                            ZJPickerViewPropertyTipLabelTextKey  : @"提示内容",
+                            ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
+                            ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
+                            ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#231F20"],
+                            ZJPickerViewPropertyLineViewBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
+                            ZJPickerViewPropertyCanceBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
+                            ZJPickerViewPropertySureBtnTitleFontKey : [UIFont systemFontOfSize:17.0f],
+                            ZJPickerViewPropertyTipLabelTextFontKey : [UIFont systemFontOfSize:17.0f],
+                            ZJPickerViewPropertyPickerViewHeightKey : @300.0f,
+                            ZJPickerViewPropertyOneComponentRowHeightKey : @40.0f,
+                            ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF6347"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
+                            ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]},
+                            ZJPickerViewPropertySelectRowLineBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
+                            ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
+                            ZJPickerViewPropertyIsShowSelectContentKey : @YES,
+                            ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
+                            ZJPickerViewPropertyIsAnimationShowKey : @YES};
 
 // 2.Show（显示）
 __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel;
@@ -113,5 +117,5 @@ __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel
 
 ## 五、结语
 * 如果在使用过程中遇到BUG，请Issues我，谢谢。
-* 如果你想为ZJPickerView输出代码，请拼命Pull Requests我，让更多的老铁们都能使用到你那吊炸天的动画效果。
+* 如果你想为ZJPickerView输出代码，请拼命Pull Requests我。
 * 联系我😯 ：[简书](http://www.jianshu.com/u/f00ad5c62f05)   [微博](http://weibo.com/ioszj)

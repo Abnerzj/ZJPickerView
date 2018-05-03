@@ -31,11 +31,14 @@ NSString * const ZJPickerViewPropertyTipLabelTextFontKey = @"ZJPickerViewPropert
 // CGFloat type
 NSString * const ZJPickerViewPropertyPickerViewHeightKey = @"ZJPickerViewPropertyPickerViewHeightKey";
 NSString * const ZJPickerViewPropertyOneComponentRowHeightKey = @"ZJPickerViewPropertyOneComponentRowHeightKey";
-// NSDictionary
+// NSDictionary type
 NSString * const ZJPickerViewPropertySelectRowTitleAttrKey = @"ZJPickerViewPropertySelectRowTitleAttrKey";
 NSString * const ZJPickerViewPropertyUnSelectRowTitleAttrKey = @"ZJPickerViewPropertyUnSelectRowTitleAttrKey";
+// UIColor type
+NSString * const ZJPickerViewPropertySelectRowLineBackgroundColorKey = @"ZJPickerViewPropertySelectRowLineBackgroundColorKey";
 
-// other: BOOL type
+// other:
+// BOOL type
 NSString * const ZJPickerViewPropertyIsTouchBackgroundHideKey = @"ZJPickerViewPropertyIsTouchBackgroundHideKey";
 NSString * const ZJPickerViewPropertyIsShowSelectContentKey = @"ZJPickerViewPropertyIsShowSelectContentKey";
 NSString * const ZJPickerViewPropertyIsScrollToSelectedRowKey = @"ZJPickerViewPropertyIsScrollToSelectedRowKey";
@@ -58,11 +61,13 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 @property (nonatomic, assign) CGFloat oneComponentRowHeight; // one component row height, default 32 pt
 @property (nonatomic, strong) NSDictionary *selectRowTitleAttribute; // select row titlt attribute
 @property (nonatomic, strong) NSDictionary *unSelectRowTitleAttribute; // unSelect row titlt attribute
+@property (nonatomic, strong) UIColor *selectRowLineBackgroundColor; // select row top and bottom line backgroundColor
 
 @property (nonatomic, assign) BOOL isTouchBackgroundHide; // touch background is hide, default NO
 @property (nonatomic, assign) BOOL isShowSelectContent; // scroll component is update and show select content in tipLabel, default NO
 @property (nonatomic, assign) BOOL isScrollToSelectedRow; // pickerView will show scroll to selected row, default NO
 @property (nonatomic, assign) BOOL isAnimationShow; // show pickerView is need Animation, default YES
+@property (nonatomic, assign) BOOL isSettedSelectRowLineBackgroundColor; // is setted select row top and bottom line backgroundColor, default NO
 @property (nonatomic, assign) CGFloat backgroundAlpha; // background alpha, default 0.5(0.0~1.0)
 @property (nonatomic, copy) void(^completion)(NSString * _Nullable  selectContent); // select content
 
@@ -102,13 +107,15 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     self.component = 0;
     self.pickerViewHeight = 224.0f;
     self.oneComponentRowHeight = 32.0f;
-    self.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]};
-    self.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:15.0f]};
+    self.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+    self.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+    self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
     
     self.isTouchBackgroundHide = NO;
     self.isShowSelectContent = NO;
     self.isScrollToSelectedRow = NO;
     self.isAnimationShow = YES;
+    self.isSettedSelectRowLineBackgroundColor = NO;
     self.backgroundAlpha = 0.5f;
 }
 
@@ -235,6 +242,43 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
 {
     return self.oneComponentRowHeight;
+}
+
+- (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
+{
+    // set separateline color
+    if (NO == self.isSettedSelectRowLineBackgroundColor) {
+        UIView *topSeparateLine = [pickerView.subviews objectAtIndex:1];
+        UIView *bottomSeparateLine = [pickerView.subviews objectAtIndex:2];
+        if (topSeparateLine.frame.size.height < 1.0f &&
+            bottomSeparateLine.frame.size.height < 1.0f) {
+            topSeparateLine.backgroundColor = self.selectRowLineBackgroundColor;
+            bottomSeparateLine.backgroundColor = self.selectRowLineBackgroundColor;
+            self.isSettedSelectRowLineBackgroundColor = YES;
+        } else {
+            for (UIView *singleLine in pickerView.subviews) {
+                if (singleLine.frame.size.height < 1.0f) {
+                    singleLine.backgroundColor = self.selectRowLineBackgroundColor;
+                    self.isSettedSelectRowLineBackgroundColor = YES;
+                }
+            }
+        }
+    }
+    
+    // custom pickerView content label
+    UILabel *pickerLabel = (UILabel *)view;
+    
+    // discussion: this is always nil, not Reusing, it's an iOS System bug.
+    // reference: https://stackoverflow.com/questions/20635949/reusing-view-in-uipickerview-with-ios-7/21039321#21039321
+    if (!pickerLabel) {
+        pickerLabel = [[UILabel alloc] init];
+        pickerLabel.textAlignment = NSTextAlignmentCenter;
+        pickerLabel.adjustsFontSizeToFitWidth = YES;
+        pickerLabel.backgroundColor = [UIColor clearColor];
+    }
+    pickerLabel.attributedText = [self pickerView:pickerView attributedTitleForRow:row forComponent:component];
+    
+    return pickerLabel;
 }
 
 - (nullable NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component
@@ -463,6 +507,8 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                 self.selectRowTitleAttribute = obj;
             } else if ([key isEqualToString:ZJPickerViewPropertyUnSelectRowTitleAttrKey]) {
                 self.unSelectRowTitleAttribute = obj;
+            } else if ([key isEqualToString:ZJPickerViewPropertySelectRowLineBackgroundColorKey]) {
+                self.selectRowLineBackgroundColor = obj;
             } else if ([key isEqualToString:ZJPickerViewPropertyIsTouchBackgroundHideKey]) {
                 self.isTouchBackgroundHide = [obj boolValue];
             } else if ([key isEqualToString:ZJPickerViewPropertyIsShowSelectContentKey]) {

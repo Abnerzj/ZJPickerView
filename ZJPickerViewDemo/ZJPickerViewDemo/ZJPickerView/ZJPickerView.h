@@ -24,7 +24,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextKey;  // tipLab
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleColorKey; // cance button Title color（取消按钮文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertySureBtnTitleColorKey;  // sure button Title color（确定按钮文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextColorKey;  // tipLabel text color（选择提示标签文字颜色）
-extern NSString * _Nonnull const ZJPickerViewPropertyLineViewBackgroundColorKey;  // lineView backgroundColor（分割线背景颜色）
+extern NSString * _Nonnull const ZJPickerViewPropertyLineViewBackgroundColorKey;  // lineView backgroundColor（顶部工具条分割线背景颜色）
 
 // font: UIFont type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleFontKey; // cance button label font, default 17.0f（取消按钮字体大小）
@@ -35,11 +35,14 @@ extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextFontKey;  // ti
 // CGFloat type
 extern NSString * _Nonnull const ZJPickerViewPropertyPickerViewHeightKey;  // pickerView height, default 224 pt（pickerView高度）
 extern NSString * _Nonnull const ZJPickerViewPropertyOneComponentRowHeightKey;  // one component row height, default 32 pt（pickerView一行的高度）
-// NSDictionary
+// NSDictionary type
 extern NSString * _Nonnull const ZJPickerViewPropertySelectRowTitleAttrKey;  // select row titlt attribute（pickerView当前选中的文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertyUnSelectRowTitleAttrKey;  // unSelect row titlt attribute（pickerView当前没有选中的文字颜色）
+// UIColor type
+extern NSString * _Nonnull const ZJPickerViewPropertySelectRowLineBackgroundColorKey;  // select row top and bottom line backgroundColor（选中行顶部和底部分割线背景颜色）
 
-// other: BOOL type
+// other:
+// BOOL type
 extern NSString * _Nonnull const ZJPickerViewPropertyIsTouchBackgroundHideKey;  // touch background is hide, default NO（是否点击背景隐藏）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsShowSelectContentKey;  // scroll component is update and show select content in tipLabel, default NO（选择内容后是否更新选择提示标签）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsScrollToSelectedRowKey;  // when pickerView will show scroll to selected row, default NO. note:`ZJPickerViewPropertyTipLabelTextKey` Must pass by value（将要显示时是否滚动到已选择内容那一行，注意，选择提示标签tipLabel必须传内容，比如之前选择了`北京`，此时就需要传入`北京`）
