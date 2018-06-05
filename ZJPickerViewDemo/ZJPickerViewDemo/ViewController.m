@@ -79,8 +79,9 @@
 - (void)showPickerViewWithDataList:(NSArray *)dataList
 {
     // 1.Custom propery（自定义属性）
-    NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
-                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
+    NSDictionary *propertyDict = @{
+//                                   ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
+//                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
                                    ZJPickerViewPropertyTipLabelTextKey  : [_selectContentLabel.text substringFromIndex:5], // @"提示内容"
                                    ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
                                    ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
@@ -93,7 +94,7 @@
                                    ZJPickerViewPropertyOneComponentRowHeightKey : @40.0f,
                                    ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF6347"], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]},
                                    ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]},
-                                   ZJPickerViewPropertySelectRowTopBottomLineColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
+                                   ZJPickerViewPropertySelectRowLineBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
                                    ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
                                    ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,

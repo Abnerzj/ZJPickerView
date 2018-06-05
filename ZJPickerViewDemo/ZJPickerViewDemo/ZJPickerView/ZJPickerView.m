@@ -142,10 +142,11 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     [contentView addSubview:toolView];
     
     // cance button
+    NSArray *diffLanguageTitles = [self getDiffLanguageCanceAndSureBtnTitles];
     UIButton *canceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     canceBtn.frame = CGRectMake(0, 0, canceBtnWidth, toolView.frame.size.height);
     [canceBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    [canceBtn setTitle:@"Cance" forState:UIControlStateNormal];
+    [canceBtn setTitle:diffLanguageTitles.firstObject forState:UIControlStateNormal];
     [canceBtn.titleLabel setFont:[UIFont systemFontOfSize:17.0]];
     [canceBtn setTag:0];
     [canceBtn addTarget:self action:@selector(userAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -155,7 +156,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     UIButton *sureBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     sureBtn.frame = CGRectMake(toolView.frame.size.width - canceBtnWidth, 0, canceBtnWidth, toolView.frame.size.height);
     [sureBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    [sureBtn setTitle:@"Sure" forState:UIControlStateNormal];
+    [sureBtn setTitle:diffLanguageTitles.lastObject forState:UIControlStateNormal];
     [sureBtn.titleLabel setFont:[UIFont systemFontOfSize:17.0]];
     [sureBtn setTag:1];
     [sureBtn addTarget:self action:@selector(userAction:) forControlEvents:UIControlEventTouchUpInside];
@@ -562,6 +563,24 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
             }
         }
     }
+}
+
+- (NSArray *)getDiffLanguageCanceAndSureBtnTitles
+{
+    NSString *languageName = [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] objectAtIndex:0];
+    
+    // 简体中文
+    if ([languageName rangeOfString:@"zh-Hans"].location != NSNotFound) {
+        return @[@"取消", @"确定"];
+    }
+    
+    // 繁体中文
+    if ([languageName rangeOfString:@"zh-Hant"].location != NSNotFound) {
+        return @[@"取消", @"確定"];
+    }
+    
+    // Other language
+    return @[@"Cance", @"Sure"];
 }
 
 @end
