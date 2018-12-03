@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "ZJPickerView"
-s.version      = "1.0.1"
+s.version      = "1.0.2"
 s.summary      = "A fast, convenient view to show pickerView."
 s.description  = <<-DESC
 A fast, convenient view to show pickerView, it support full Customization.
