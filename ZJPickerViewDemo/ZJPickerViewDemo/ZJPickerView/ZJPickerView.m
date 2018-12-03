@@ -356,15 +356,18 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
         return;
     }
     
+    // discussion: reload component in main queue, fix the first scroll to select line error bug.
     // scorll all component to selectedRow/top
-    [[self sharedView].pickerView reloadAllComponents];
-    if ([[self sharedView] isShowSelectContent] && [self sharedView].isScrollToSelectedRow) {
-        [[self sharedView] scrollToSelectedRow];
-    } else {
-        for (NSUInteger i = 0; i < [self sharedView].component; i++) {
-            [[self sharedView].pickerView selectRow:0 inComponent:i animated:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[self sharedView].pickerView reloadAllComponents];
+        if ([[self sharedView] isShowSelectContent] && [self sharedView].isScrollToSelectedRow) {
+            [[self sharedView] scrollToSelectedRow];
+        } else {
+            for (NSUInteger i = 0; i < [self sharedView].component; i++) {
+                [[self sharedView].pickerView selectRow:0 inComponent:i animated:NO];
+            }
         }
-    }
+    });
     
     // complete block
     if (completion) {
@@ -432,7 +435,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 {
     NSMutableArray *tempArray = [NSMutableArray arrayWithArray:self.dataList];
     NSMutableArray *arrayM = [NSMutableArray array];
-    for (NSUInteger i = 0; i <= component; i++) {
+    for (NSInteger i = 0; i <= component; i++) {
         if (i == component) {
             id data = tempArray.firstObject;
             if ([data isKindOfClass:[NSDictionary class]]) {
