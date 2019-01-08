@@ -547,8 +547,10 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                         title = [NSString stringWithFormat:@"%@", obj];
                     }
                     if (![title isEqualToString:@""]) {
+                        // discussion: scroll to select row error when solving content similar, only appear when there is only one component.
+                        // reference: https://github.com/Abnerzj/ZJPickerView/issues/4
                         NSRange range = [selectedContent rangeOfString:title];
-                        if (range.location != NSNotFound) {
+                        if ((i == 0) ? (range.location == 0) : (range.location != NSNotFound)) {
                             [tempSelectedRowArray addObject:@(idx)];
                             [weakself.pickerView reloadComponent:i];
                             [weakself.pickerView selectRow:idx inComponent:i animated:NO];
