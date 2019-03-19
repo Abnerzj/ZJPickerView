@@ -78,7 +78,7 @@
 #pragma mark 显示选择控制器
 - (void)showPickerViewWithDataList:(NSArray *)dataList
 {
-    // 1.Custom propery（自定义属性）
+    // 1.Custom propery（自定义属性，根据需要添加想要的属性。PS：如果在多个地方使用到自定义弹框，建议把propertyDict定义为一个宏或全局变量）
     NSDictionary *propertyDict = @{
 //                                   ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
 //                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
@@ -96,6 +96,7 @@
                                    ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]},
                                    ZJPickerViewPropertySelectRowLineBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
                                    ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
+//                                   ZJPickerViewPropertyIsShowTipLabelKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
                                    ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
                                    ZJPickerViewPropertyIsAnimationShowKey : @YES};
@@ -120,7 +121,7 @@
 - (void)initDataAndSubViews
 {
     // 1.选择内容(selected content)
-    _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 64.0f, self.view.frame.size.width, 44.0f)];
+    _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.navigationController.navigationBar.frame), self.view.frame.size.width, 44.0f)];
     _selectContentLabel.text = @"选择内容：";
     _selectContentLabel.textColor = [UIColor brownColor];
     _selectContentLabel.font = [UIFont systemFontOfSize:17.0f];

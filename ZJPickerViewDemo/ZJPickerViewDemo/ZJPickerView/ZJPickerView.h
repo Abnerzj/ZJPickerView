@@ -44,6 +44,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertySelectRowLineBackgroundColo
 // other:
 // BOOL type
 extern NSString * _Nonnull const ZJPickerViewPropertyIsTouchBackgroundHideKey;  // touch background is hide, default NO（是否点击背景隐藏）
+extern NSString * _Nonnull const ZJPickerViewPropertyIsShowTipLabelKey;  // is show tipLabel, default NO. note: if the value of this key`ZJPickerViewPropertyIsShowSelectContentKey` is YES, the value of ZJPickerViewPropertyIsShowTipLabelKey is ignored.（是否显示提示标签。注意，如果这个key`ZJPickerViewPropertyIsShowSelectContentKey`的值为YES，忽略ZJPickerViewPropertyIsShowTipLabelKey的值）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsShowSelectContentKey;  // scroll component is update and show select content in tipLabel, default NO（选择内容后是否更新选择提示标签）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsScrollToSelectedRowKey;  // when pickerView will show scroll to selected row, default NO. note:`ZJPickerViewPropertyTipLabelTextKey` Must pass by value（将要显示时是否滚动到已选择内容那一行，注意，选择提示标签tipLabel必须传内容，比如之前选择了`北京`，此时就需要传入`北京`）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsAnimationShowKey;  // show pickerView is need Animation, default YES（显示pickerView时是否带动画效果）

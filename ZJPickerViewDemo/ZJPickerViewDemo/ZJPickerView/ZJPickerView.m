@@ -40,6 +40,7 @@ NSString * const ZJPickerViewPropertySelectRowLineBackgroundColorKey = @"ZJPicke
 // other:
 // BOOL type
 NSString * const ZJPickerViewPropertyIsTouchBackgroundHideKey = @"ZJPickerViewPropertyIsTouchBackgroundHideKey";
+NSString * const ZJPickerViewPropertyIsShowTipLabelKey = @"ZJPickerViewPropertyIsShowTipLabelKey";
 NSString * const ZJPickerViewPropertyIsShowSelectContentKey = @"ZJPickerViewPropertyIsShowSelectContentKey";
 NSString * const ZJPickerViewPropertyIsScrollToSelectedRowKey = @"ZJPickerViewPropertyIsScrollToSelectedRowKey";
 NSString * const ZJPickerViewPropertyIsAnimationShowKey = @"ZJPickerViewPropertyIsAnimationShowKey";
@@ -64,6 +65,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 @property (nonatomic, strong) UIColor *selectRowLineBackgroundColor; // select row top and bottom line backgroundColor
 
 @property (nonatomic, assign) BOOL isTouchBackgroundHide; // touch background is hide, default NO
+@property (nonatomic, assign) BOOL isShowTipLabel; // is show tipLabel, default NO.
 @property (nonatomic, assign) BOOL isShowSelectContent; // scroll component is update and show select content in tipLabel, default NO
 @property (nonatomic, assign) BOOL isScrollToSelectedRow; // pickerView will show scroll to selected row, default NO
 @property (nonatomic, assign) BOOL isAnimationShow; // show pickerView is need Animation, default YES
@@ -112,6 +114,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
     
     self.isTouchBackgroundHide = NO;
+    self.isShowTipLabel = NO;
     self.isShowSelectContent = NO;
     self.isScrollToSelectedRow = NO;
     self.isAnimationShow = YES;
@@ -168,7 +171,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     tipLabel.textColor = [UIColor darkTextColor];
     tipLabel.font = [UIFont systemFontOfSize:17.0];
     tipLabel.textAlignment = NSTextAlignmentCenter;
-    tipLabel.hidden = !self.isShowSelectContent;
+    tipLabel.hidden = !self.isShowTipLabel;
     [toolView addSubview:tipLabel];
     
     // line view
@@ -360,7 +363,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     // scorll all component to selectedRow/top
     dispatch_async(dispatch_get_main_queue(), ^{
         [[self sharedView].pickerView reloadAllComponents];
-        if ([[self sharedView] isShowSelectContent] && [self sharedView].isScrollToSelectedRow) {
+        if ([self sharedView].isScrollToSelectedRow) {
             [[self sharedView] scrollToSelectedRow];
         } else {
             for (NSUInteger i = 0; i < [self sharedView].component; i++) {
@@ -515,9 +518,14 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                 self.selectRowLineBackgroundColor = obj;
             } else if ([key isEqualToString:ZJPickerViewPropertyIsTouchBackgroundHideKey]) {
                 self.isTouchBackgroundHide = [obj boolValue];
+            } else if ([key isEqualToString:ZJPickerViewPropertyIsShowTipLabelKey]) {
+                self.isShowTipLabel = [obj boolValue]; // NO
+                self.tipLabel.hidden = self.isShowSelectContent ? NO : !self.isShowTipLabel;
             } else if ([key isEqualToString:ZJPickerViewPropertyIsShowSelectContentKey]) {
-                self.isShowSelectContent = [obj boolValue];
-                self.tipLabel.hidden = !self.isShowSelectContent;
+                self.isShowSelectContent = [obj boolValue]; // NO
+                if (self.isShowSelectContent) {
+                    self.tipLabel.hidden = NO;
+                }
             } else if ([key isEqualToString:ZJPickerViewPropertyIsScrollToSelectedRowKey]) {
                 self.isScrollToSelectedRow = [obj boolValue];
             } else if ([key isEqualToString:ZJPickerViewPropertyBackgroundAlphaKey]) {
@@ -551,7 +559,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                         // reference: https://github.com/Abnerzj/ZJPickerView/issues/4
                         //            https://github.com/Abnerzj/ZJPickerView/issues/5
                         NSRange range = [selectedContent rangeOfString:title];
-                        if ((i == 0) ? ([selectedContent isEqualToString:title]) : (range.location != NSNotFound)) {
+                        if ((self.component == 1 && i == 0) ? ([selectedContent isEqualToString:title]) : (range.location != NSNotFound)) {
                             [tempSelectedRowArray addObject:@(idx)];
                             [weakself.pickerView reloadComponent:i];
                             [weakself.pickerView selectRow:idx inComponent:i animated:NO];
