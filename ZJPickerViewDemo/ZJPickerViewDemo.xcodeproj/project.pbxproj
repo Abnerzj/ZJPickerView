@@ -19,7 +19,7 @@
 		9A7EB23D2008B6E700A991E2 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB23C2008B6E700A991E2 /* main.m */; };
 		9A7EB2472008B6E700A991E2 /* ZJPickerViewDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB2462008B6E700A991E2 /* ZJPickerViewDemoTests.m */; };
 		9A7EB2522008B6E700A991E2 /* ZJPickerViewDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB2512008B6E700A991E2 /* ZJPickerViewDemoUITests.m */; };
-		9A7EB2632008B8FB00A991E2 /* ZJPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A7EB2612008B8FB00A991E2 /* ZJPickerView.m */; };
+		9ABC75922240EB3A00730C94 /* ZJPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9ABC75912240EB3A00730C94 /* ZJPickerView.m */; };
 		9AEBE3562008C7EB00AB2788 /* CityData.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9AEBE3552008C7EB00AB2788 /* CityData.plist */; };
 /* End PBXBuildFile section */
 
@@ -63,8 +63,8 @@
 		9A7EB24D2008B6E700A991E2 /* ZJPickerViewDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ZJPickerViewDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9A7EB2512008B6E700A991E2 /* ZJPickerViewDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZJPickerViewDemoUITests.m; sourceTree = "<group>"; };
 		9A7EB2532008B6E700A991E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9A7EB2602008B8FB00A991E2 /* ZJPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJPickerView.h; sourceTree = "<group>"; };
-		9A7EB2612008B8FB00A991E2 /* ZJPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJPickerView.m; sourceTree = "<group>"; };
+		9ABC75902240EB3A00730C94 /* ZJPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZJPickerView.h; sourceTree = "<group>"; };
+		9ABC75912240EB3A00730C94 /* ZJPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZJPickerView.m; sourceTree = "<group>"; };
 		9AEBE3552008C7EB00AB2788 /* CityData.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CityData.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -116,7 +116,7 @@
 		9A7EB22C2008B6E700A991E2 /* ZJPickerViewDemo */ = {
 			isa = PBXGroup;
 			children = (
-				9A7EB25F2008B8FB00A991E2 /* ZJPickerView */,
+				9ABC758F2240EB3A00730C94 /* ZJPickerView */,
 				9A7EB22D2008B6E700A991E2 /* AppDelegate.h */,
 				9A7EB22E2008B6E700A991E2 /* AppDelegate.m */,
 				9A7EB2302008B6E700A991E2 /* ViewController.h */,
@@ -155,13 +155,14 @@
 			path = ZJPickerViewDemoUITests;
 			sourceTree = "<group>";
 		};
-		9A7EB25F2008B8FB00A991E2 /* ZJPickerView */ = {
+		9ABC758F2240EB3A00730C94 /* ZJPickerView */ = {
 			isa = PBXGroup;
 			children = (
-				9A7EB2602008B8FB00A991E2 /* ZJPickerView.h */,
-				9A7EB2612008B8FB00A991E2 /* ZJPickerView.m */,
+				9ABC75902240EB3A00730C94 /* ZJPickerView.h */,
+				9ABC75912240EB3A00730C94 /* ZJPickerView.m */,
 			);
-			path = ZJPickerView;
+			name = ZJPickerView;
+			path = ../../ZJPickerView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -302,9 +303,9 @@
 			files = (
 				9A693BD9200CB8D100E88E41 /* ZJPickerViewModel.m in Sources */,
 				9A7EB2322008B6E700A991E2 /* ViewController.m in Sources */,
+				9ABC75922240EB3A00730C94 /* ZJPickerView.m in Sources */,
 				9A693BD5200C533C00E88E41 /* UIColor+ZJ.m in Sources */,
 				9A7EB23D2008B6E700A991E2 /* main.m in Sources */,
-				9A7EB2632008B8FB00A991E2 /* ZJPickerView.m in Sources */,
 				9A7EB22F2008B6E700A991E2 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

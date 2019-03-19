@@ -12,6 +12,6 @@ s.author             = { "Abnerzj" => "Abnerzj@163.com" }
 s.social_media_url   = "http://weibo.com/ioszj"
 s.platform     = :ios, "7.0"
 s.source       = { :git => "https://github.com/Abnerzj/ZJPickerView.git", :tag => "#{s.version}" }
-s.source_files  = "ZJPickerViewDemo/ZJPickerViewDemo/ZJPickerView/*.{h,m}"
+s.source_files  = "ZJPickerView/*.{h,m}"
 s.requires_arc = true
 end
