@@ -18,6 +18,7 @@
 ## Features【能做什么】
 - 一行代码即可集成。
 - 支持**任意列**数据联动展示。
+- 支持**字符串**、**整型**、**浮点型**等数据类型。
 - 支持自定义界面中子控件的**文字颜色**、**文字字体**。
 - 支持自定义PickerView的属性：PickerView的高度、PickerView一行的高度、选中内容和未选中内容**文字属性**、选中行分割线背景颜色。
 - 支持自定义**背景透明度**和是否接收背景触摸事件。
@@ -53,7 +54,7 @@ ZJPickerView.m
 // content: NSString type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleKey; // cance button Title（取消按钮）
 extern NSString * _Nonnull const ZJPickerViewPropertySureBtnTitleKey;  // sure button Title（确定按钮）
-extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextKey;  // tipLabel text（选择提示标签）
+extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextKey;  // tipLabel text（选择提示标签，tips: When multi component, recommended the selected content be separated by commas. 重要提示：多列时建议已选择的内容用英文逗号隔开，参考`ZJPickerViewPropertyIsDividedSelectContentKey`这个key）
 
 // color: UIColor type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleColorKey; // cance button Title color（取消按钮文字颜色）
@@ -82,6 +83,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertyIsTouchBackgroundHideKey;  
 extern NSString * _Nonnull const ZJPickerViewPropertyIsShowTipLabelKey;  // is show tipLabel, default NO. note: if the value of this key`ZJPickerViewPropertyIsShowSelectContentKey` is YES, the value of ZJPickerViewPropertyIsShowTipLabelKey is ignored.（是否显示提示标签。注意，如果这个key`ZJPickerViewPropertyIsShowSelectContentKey`的值为YES，忽略ZJPickerViewPropertyIsShowTipLabelKey的值）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsShowSelectContentKey;  // scroll component is update and show select content in tipLabel, default NO（选择内容后是否更新选择提示标签）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsScrollToSelectedRowKey;  // when pickerView will show scroll to selected row, default NO. note:`ZJPickerViewPropertyTipLabelTextKey` Must pass by value（将要显示时是否滚动到已选择内容那一行，注意，选择提示标签tipLabel必须传内容，比如之前选择了`北京`，此时就需要传入`北京`）
+extern NSString * _Nonnull const ZJPickerViewPropertyIsDividedSelectContentKey;  // the select content is divided by comma symbol when pickerView before show, use string matching for every component if value is nil, default NO.（pickerView显示前，已选择的内容是否已用逗号隔开，默认用选择的内容字符串去匹配每一列选中的内容，如果每一列选中的内容存在相似，会造成滚动到选择的那一行出现问题。比如，总共有两列，选择的内容是：`8.2,8.2`，第一列选择的内容`8.2`在索引2的位置，第二列选择的内容`8.2`在索引4的位置，这个时候如果用默认的匹配规则，则每一列在滚动到已选择那一行时，都只会滚动到索引为2之处）
 extern NSString * _Nonnull const ZJPickerViewPropertyIsAnimationShowKey;  // show pickerView is need Animation, default YES（显示pickerView时是否带动画效果）
 // CGFloat type
 extern NSString * _Nonnull const ZJPickerViewPropertyBackgroundAlphaKey;  // background alpha, default 0.5(0.0~1.0)（背景视图透明度）
@@ -91,7 +93,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertyBackgroundAlphaKey;  // bac
 // 1.Custom propery（自定义属性，根据需要添加想要的属性。PS：如果在多个地方使用到自定义弹框，建议把propertyDict定义为一个宏或全局变量）
 NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
                             ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
-                            ZJPickerViewPropertySureBtnTitleKey  : @"确定",
+                            ZJPickerViewPropertyTipLabelTextKey  : @"提示内容",
                             ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
                             ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
                             ZJPickerViewPropertyTipLabelTextColorKey : [UIColor zj_colorWithHexString:@"#231F20"],
@@ -108,6 +110,7 @@ NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
                             ZJPickerViewPropertyIsShowTipLabelKey : @YES,
                             ZJPickerViewPropertyIsShowSelectContentKey : @YES,
                             ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
+                            ZJPickerViewPropertyIsDividedSelectContentKey: @YES,
                             ZJPickerViewPropertyIsAnimationShowKey : @YES};
 
 // 2.Show（显示）

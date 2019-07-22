@@ -43,12 +43,14 @@ NSString * const ZJPickerViewPropertyIsTouchBackgroundHideKey = @"ZJPickerViewPr
 NSString * const ZJPickerViewPropertyIsShowTipLabelKey = @"ZJPickerViewPropertyIsShowTipLabelKey";
 NSString * const ZJPickerViewPropertyIsShowSelectContentKey = @"ZJPickerViewPropertyIsShowSelectContentKey";
 NSString * const ZJPickerViewPropertyIsScrollToSelectedRowKey = @"ZJPickerViewPropertyIsScrollToSelectedRowKey";
+NSString * const ZJPickerViewPropertyIsDividedSelectContentKey = @"ZJPickerViewPropertyIsDividedSelectContentKey";
 NSString * const ZJPickerViewPropertyIsAnimationShowKey = @"ZJPickerViewPropertyIsAnimationShowKey";
 // CGFloat type
 NSString * const ZJPickerViewPropertyBackgroundAlphaKey = @"ZJPickerViewPropertyBackgroundAlphaKey";
 
 static const CGFloat toolViewHeight = 44.0f; // tool view height
 static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button height
+static NSString * const kDividedSymbol = @","; // divided symbol
 
 @interface ZJPickerView ()<UIPickerViewDataSource, UIPickerViewDelegate>
 
@@ -68,6 +70,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 @property (nonatomic, assign) BOOL isShowTipLabel; // is show tipLabel, default NO.
 @property (nonatomic, assign) BOOL isShowSelectContent; // scroll component is update and show select content in tipLabel, default NO
 @property (nonatomic, assign) BOOL isScrollToSelectedRow; // pickerView will show scroll to selected row, default NO
+@property (nonatomic, assign) BOOL isDividedSelectContent; // select content is divided, default NO
 @property (nonatomic, assign) BOOL isAnimationShow; // show pickerView is need Animation, default YES
 @property (nonatomic, assign) BOOL isSettedSelectRowLineBackgroundColor; // is setted select row top and bottom line backgroundColor, default NO
 @property (nonatomic, assign) CGFloat backgroundAlpha; // background alpha, default 0.5(0.0~1.0)
@@ -117,6 +120,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     self.isShowTipLabel = NO;
     self.isShowSelectContent = NO;
     self.isScrollToSelectedRow = NO;
+    self.isDividedSelectContent = NO;
     self.isAnimationShow = YES;
     self.isSettedSelectRowLineBackgroundColor = NO;
     self.backgroundAlpha = 0.5f;
@@ -308,7 +312,7 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
         for (NSUInteger i = 0; i < self.component; i++) {
             [selectString appendString:[self pickerView:self.pickerView titleForRow:[self.pickerView selectedRowInComponent:i] forComponent:i]];
             if (i != self.component - 1) { // 多行用 "," 分割
-                [selectString appendString:@","];
+                [selectString appendString:kDividedSymbol];
             }
         }
         
@@ -528,6 +532,8 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                 }
             } else if ([key isEqualToString:ZJPickerViewPropertyIsScrollToSelectedRowKey]) {
                 self.isScrollToSelectedRow = [obj boolValue];
+            } else if ([key isEqualToString:ZJPickerViewPropertyIsDividedSelectContentKey]) {
+                self.isDividedSelectContent = [obj boolValue];
             } else if ([key isEqualToString:ZJPickerViewPropertyBackgroundAlphaKey]) {
                 self.backgroundAlpha = [obj floatValue];
                 self.backgroundView.alpha = self.backgroundAlpha;
@@ -541,6 +547,13 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
 - (void)scrollToSelectedRow
 {
     NSString *selectedContent = self.propertyDict[ZJPickerViewPropertyTipLabelTextKey];
+    NSMutableArray *selectContentList = [NSMutableArray arrayWithCapacity:self.component];
+    if (self.isDividedSelectContent) {
+        NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:kDividedSymbol];
+        if (tempSelectContentList && tempSelectContentList.count == self.component) {
+            [selectContentList addObjectsFromArray:tempSelectContentList];
+        }
+    }
     if (selectedContent.length && ![selectedContent isEqualToString:@""]) {
         __weak typeof(self) weakself = self;
         NSMutableArray *tempSelectedRowArray = [NSMutableArray arrayWithCapacity:self.component];
@@ -552,14 +565,21 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
                     if ([obj isKindOfClass:[NSString class]]) {
                         title = obj;
                     } else if ([obj isKindOfClass:[NSNumber class]]) {
-                        title = [NSString stringWithFormat:@"%@", obj];
+                        title = [obj stringValue];
                     }
                     if (![title isEqualToString:@""]) {
-                        // discussion: scroll to select row error when solving content similar, only appear when there is only one component.
-                        // reference: https://github.com/Abnerzj/ZJPickerView/issues/4
-                        //            https://github.com/Abnerzj/ZJPickerView/issues/5
-                        NSRange range = [selectedContent rangeOfString:title];
-                        if ((self.component == 1 && i == 0) ? ([selectedContent isEqualToString:title]) : (range.location != NSNotFound)) {
+                        BOOL isCanScrollToSelectePosition = NO;
+                        if (selectContentList.count > 0) {
+                            isCanScrollToSelectePosition = [selectContentList[i] isEqualToString:title];
+                        } else {
+                            // discussion: scroll to select row error when solving content similar, only appear when there is only one component.
+                            // reference: https://github.com/Abnerzj/ZJPickerView/issues/4
+                            //            https://github.com/Abnerzj/ZJPickerView/issues/5
+                            NSRange range = [selectedContent rangeOfString:title];
+                            isCanScrollToSelectePosition = (self.component == 1) ? ([selectedContent isEqualToString:title]) : (range.location != NSNotFound);
+                        }
+                        
+                        if (isCanScrollToSelectePosition) {
                             [tempSelectedRowArray addObject:@(idx)];
                             [weakself.pickerView reloadComponent:i];
                             [weakself.pickerView selectRow:idx inComponent:i animated:NO];

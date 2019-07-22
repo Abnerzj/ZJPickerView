@@ -51,6 +51,7 @@
     if (indexPath.row >= 0 && indexPath.row < _dataList.count) {
         NSDictionary *dict = _dataList[indexPath.row];
         cell.textLabel.text = dict[@"title"];
+        cell.textLabel.font = [UIFont systemFontOfSize:15.0f];
     }
     
     return cell;
@@ -82,6 +83,7 @@
     NSDictionary *propertyDict = @{
 //                                   ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
 //                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
+//                                   ZJPickerViewPropertyTipLabelTextKey  : @"上海,虹口区", // @"提示内容"，多列时推荐使用英文逗号隔开，参考注释
                                    ZJPickerViewPropertyTipLabelTextKey  : [_selectContentLabel.text substringFromIndex:5], // @"提示内容"
                                    ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
                                    ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
@@ -99,6 +101,7 @@
 //                                   ZJPickerViewPropertyIsShowTipLabelKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
                                    ZJPickerViewPropertyIsScrollToSelectedRowKey: @YES,
+//                                   ZJPickerViewPropertyIsDividedSelectContentKey: @YES, // 选择的内容是否已经用英文逗号隔开
                                    ZJPickerViewPropertyIsAnimationShowKey : @YES};
     
     // 2.Show（显示）
@@ -133,8 +136,12 @@
     // 2.1 单列数据(one component Data)
     // 2.1.1 NSString
     NSArray *stringDataList = @[@"IT", @"销售", @"自媒体", @"游戏主播", @"产品策划"];
-    // 2.1.2 NSNumber
-    NSArray *numberDataList = @[@22, @88, @188, @288, @688];
+    // 2.1.2 NSNumber:Int
+    NSArray *intNumberDataList = @[@22, @88, @188, @288, @688];
+    // 2.1.3 NSNumber:Float
+    // 如果直接用浮点类型，因为iOS 处理浮点类型会精度丢失，可以用NSDecimalNumber来解决，本控件库没有做处理，需要你自行处理。参考：https://www.jianshu.com/p/3470ec0bb1ac（Tips: If you use the floating point type directly, because iOS processing floating point type will lose precision, you can use NSDecimalNumber to solve, this control library does not process, you need to handle it yourself. Reference: https://www.jianshu.com/p/3470ec0bb1ac）
+    NSArray *floatNumberDataList = @[@"2.2", @"8.2", @"18.2", @"2.88", @"68.8"]; // suggest
+//    NSArray *floatNumberDataList = @[@2.2, @8.2, @18.2, @2.88, @68.8]; // not suggested
     
     // 2.2 多列数据(multi component Data)
     // 2.2.1 NSDictionary
@@ -153,7 +160,8 @@
     NSArray *arbitraryDataList = [self getCityData];
     
     _dataList = @[@{@"title" : @"One component-->NSString(单列数据)", @"dataList" : stringDataList},
-                  @{@"title" : @"One component-->NSNumber(单列数据)", @"dataList" : numberDataList},
+                  @{@"title" : @"One component-->NSNumber(Int单列数据)", @"dataList" : intNumberDataList},
+                  @{@"title" : @"One component-->NSNumber(Float单列数据)", @"dataList" : floatNumberDataList},
                   @{@"title" : @"Multi component-->NSDictionary(多列数据)", @"dataList" : dictDataList},
                   @{@"title" : @"Multi component-->NSArray(多列数据)", @"dataList" : arrayDataList},
                   @{@"title" : @"Multi component-->NSArray(任意列数据)", @"dataList" : arbitraryDataList}];
