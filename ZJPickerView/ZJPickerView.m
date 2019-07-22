@@ -549,6 +549,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     NSString *selectedContent = self.propertyDict[ZJPickerViewPropertyTipLabelTextKey];
     NSMutableArray *selectContentList = [NSMutableArray arrayWithCapacity:self.component];
     if (self.isDividedSelectContent) {
+        // reference: https://github.com/Abnerzj/ZJPickerView/issues/8
         NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:kDividedSymbol];
         if (tempSelectContentList && tempSelectContentList.count == self.component) {
             [selectContentList addObjectsFromArray:tempSelectContentList];
