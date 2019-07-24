@@ -15,6 +15,7 @@
 NSString * const ZJPickerViewPropertyCanceBtnTitleKey = @"ZJPickerViewPropertyCanceBtnTitleKey";
 NSString * const ZJPickerViewPropertySureBtnTitleKey = @"ZJPickerViewPropertySureBtnTitleKey";
 NSString * const ZJPickerViewPropertyTipLabelTextKey = @"ZJPickerViewPropertyTipLabelTextKey";
+NSString * const ZJPickerViewPropertyDividedSymbolKey = @"ZJPickerViewPropertyDividedSymbolKey";
 
 // color: UIColor type
 NSString * const ZJPickerViewPropertyCanceBtnTitleColorKey = @"ZJPickerViewPropertyCanceBtnTitleColorKey";
@@ -65,6 +66,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 @property (nonatomic, strong) NSDictionary *selectRowTitleAttribute; // select row titlt attribute
 @property (nonatomic, strong) NSDictionary *unSelectRowTitleAttribute; // unSelect row titlt attribute
 @property (nonatomic, strong) UIColor *selectRowLineBackgroundColor; // select row top and bottom line backgroundColor
+@property (nonatomic, copy) NSString *dividedSymbol; // divided symbol, default commas
 
 @property (nonatomic, assign) BOOL isTouchBackgroundHide; // touch background is hide, default NO
 @property (nonatomic, assign) BOOL isShowTipLabel; // is show tipLabel, default NO.
@@ -115,6 +117,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     self.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
     self.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
     self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    self.dividedSymbol = kDividedSymbol;
     
     self.isTouchBackgroundHide = NO;
     self.isShowTipLabel = NO;
@@ -312,7 +315,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
         for (NSUInteger i = 0; i < self.component; i++) {
             [selectString appendString:[self pickerView:self.pickerView titleForRow:[self.pickerView selectedRowInComponent:i] forComponent:i]];
             if (i != self.component - 1) { // 多行用 "," 分割
-                [selectString appendString:kDividedSymbol];
+                [selectString appendString:self.dividedSymbol];
             }
         }
         
@@ -488,6 +491,8 @@ static NSString * const kDividedSymbol = @","; // divided symbol
                 [self.sureBtn setTitle:obj forState:UIControlStateNormal];
             } else if ([key isEqualToString:ZJPickerViewPropertyTipLabelTextKey]) {
                 self.tipLabel.text = obj;
+            } else if ([key isEqualToString:ZJPickerViewPropertyDividedSymbolKey]) {
+                self.dividedSymbol = obj;
             } else if ([key isEqualToString:ZJPickerViewPropertyCanceBtnTitleColorKey]) {
                 [self.canceBtn setTitleColor:obj forState:UIControlStateNormal];
             } else if ([key isEqualToString:ZJPickerViewPropertySureBtnTitleColorKey]) {
@@ -550,7 +555,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     NSMutableArray *selectContentList = [NSMutableArray arrayWithCapacity:self.component];
     if (self.isDividedSelectContent) {
         // reference: https://github.com/Abnerzj/ZJPickerView/issues/8
-        NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:kDividedSymbol];
+        NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:self.dividedSymbol];
         if (tempSelectContentList && tempSelectContentList.count == self.component) {
             [selectContentList addObjectsFromArray:tempSelectContentList];
         }

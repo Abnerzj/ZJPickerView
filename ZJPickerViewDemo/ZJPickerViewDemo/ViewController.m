@@ -84,6 +84,7 @@
 //                                   ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
 //                                   ZJPickerViewPropertySureBtnTitleKey  : @"确定",
 //                                   ZJPickerViewPropertyTipLabelTextKey  : @"上海,虹口区", // @"提示内容"，多列时推荐使用英文逗号隔开，参考注释
+//                                   ZJPickerViewPropertyDividedSymbolKey : @"#", // 选中内容的分隔符，默认英文逗号
                                    ZJPickerViewPropertyTipLabelTextKey  : [_selectContentLabel.text substringFromIndex:5], // @"提示内容"
                                    ZJPickerViewPropertyCanceBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#A9A9A9"],
                                    ZJPickerViewPropertySureBtnTitleColorKey : [UIColor zj_colorWithHexString:@"#FF6347"],
