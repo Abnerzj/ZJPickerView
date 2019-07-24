@@ -55,6 +55,7 @@ ZJPickerView.m
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleKey; // cance button Title（取消按钮）
 extern NSString * _Nonnull const ZJPickerViewPropertySureBtnTitleKey;  // sure button Title（确定按钮）
 extern NSString * _Nonnull const ZJPickerViewPropertyTipLabelTextKey;  // tipLabel text（选择提示标签，tips: When multi component, recommended the selected content be separated by commas. 重要提示：多列时建议已选择的内容用英文逗号隔开，参考`ZJPickerViewPropertyIsDividedSelectContentKey`这个key）
+extern NSString * _Nonnull const ZJPickerViewPropertyDividedSymbolKey;  // divided symbol, default commas （选中内容的分隔符，默认英文逗号）
 
 // color: UIColor type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleColorKey; // cance button Title color（取消按钮文字颜色）
