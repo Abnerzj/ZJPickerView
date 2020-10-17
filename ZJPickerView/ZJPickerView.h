@@ -40,7 +40,7 @@ extern NSString * _Nonnull const ZJPickerViewPropertyOneComponentRowHeightKey;  
 extern NSString * _Nonnull const ZJPickerViewPropertySelectRowTitleAttrKey;  // select row titlt attribute（pickerView当前选中的文字颜色）
 extern NSString * _Nonnull const ZJPickerViewPropertyUnSelectRowTitleAttrKey;  // unSelect row titlt attribute（pickerView当前没有选中的文字颜色）
 // UIColor type
-extern NSString * _Nonnull const ZJPickerViewPropertySelectRowLineBackgroundColorKey;  // select row top and bottom line backgroundColor（选中行顶部和底部分割线背景颜色）
+extern NSString * _Nonnull const ZJPickerViewPropertySelectRowLineBackgroundColorKey;  // select row top and bottom line backgroundColor, IOS 14+ is to cover the framed background above the selected row. The transparency of the background color is recommended to be set to 0.12, otherwise the content of the selected row will be blocked（选中行顶部和底部分割线背景颜色，iOS 14+是覆盖在选中行上面的框住背景，背景颜色的透明度建议设置为0.12，否则会遮挡选中行的内容）
 
 // other:
 // BOOL type

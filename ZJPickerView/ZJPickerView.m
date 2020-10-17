@@ -116,7 +116,11 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     self.oneComponentRowHeight = 32.0f;
     self.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
     self.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
-    self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    if (@available(iOS 14.0, *)) {
+        self.selectRowLineBackgroundColor = [UIColor tertiarySystemFillColor];
+    } else {
+        self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    }
     self.dividedSymbol = kDividedSymbol;
     
     self.isTouchBackgroundHide = NO;
@@ -258,20 +262,17 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
 {
     // set separateline color
+    // discussion: Fix iOS 14+ setting the color of the selected line dividing line crashes
+    // reference: https://github.com/Abnerzj/ZJPickerView/issues/9
     if (NO == self.isSettedSelectRowLineBackgroundColor) {
-        UIView *topSeparateLine = [pickerView.subviews objectAtIndex:1];
-        UIView *bottomSeparateLine = [pickerView.subviews objectAtIndex:2];
-        if (topSeparateLine.frame.size.height < 1.0f &&
-            bottomSeparateLine.frame.size.height < 1.0f) {
-            topSeparateLine.backgroundColor = self.selectRowLineBackgroundColor;
-            bottomSeparateLine.backgroundColor = self.selectRowLineBackgroundColor;
-            self.isSettedSelectRowLineBackgroundColor = YES;
-        } else {
-            for (UIView *singleLine in pickerView.subviews) {
-                if (singleLine.frame.size.height < 1.0f) {
-                    singleLine.backgroundColor = self.selectRowLineBackgroundColor;
-                    self.isSettedSelectRowLineBackgroundColor = YES;
-                }
+        for (UIView *singleLine in pickerView.subviews) {
+            if (singleLine.frame.size.height < 1.0f) { // under iOS 13, height = 0.5f;
+                singleLine.backgroundColor = self.selectRowLineBackgroundColor;
+                self.isSettedSelectRowLineBackgroundColor = YES;
+            }
+            else if (singleLine.frame.size.height == 42.0f) { // iOS 14+, select
+                singleLine.backgroundColor = self.selectRowLineBackgroundColor;
+                self.isSettedSelectRowLineBackgroundColor = YES;
             }
         }
     }

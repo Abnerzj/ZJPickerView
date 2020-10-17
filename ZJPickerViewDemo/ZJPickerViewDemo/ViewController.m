@@ -98,6 +98,7 @@
                                    ZJPickerViewPropertySelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#FF6347"], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]},
                                    ZJPickerViewPropertyUnSelectRowTitleAttrKey : @{NSForegroundColorAttributeName : [UIColor zj_colorWithHexString:@"#A9A9A9"], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]},
                                    ZJPickerViewPropertySelectRowLineBackgroundColorKey : [UIColor zj_colorWithHexString:@"#dedede"],
+//                                   ZJPickerViewPropertySelectRowLineBackgroundColorKey : [[UIColor redColor] colorWithAlphaComponent:0.12], // iOS 14+
                                    ZJPickerViewPropertyIsTouchBackgroundHideKey : @YES,
 //                                   ZJPickerViewPropertyIsShowTipLabelKey : @YES,
                                    ZJPickerViewPropertyIsShowSelectContentKey : @YES,
