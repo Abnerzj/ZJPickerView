@@ -112,10 +112,8 @@ __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel
 }];
 ```
 
+### 第二种方式：通过自定义属性
 ```objc
-
-
-// 第二种方式：通过自定义属性
 // 支持的属性列表
 // content: NSString type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleKey; // cance button Title（取消按钮）
