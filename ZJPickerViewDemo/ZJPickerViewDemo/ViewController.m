@@ -62,7 +62,11 @@
     if (indexPath.row >= 0 && indexPath.row < _dataList.count) {
         NSDictionary *dict = _dataList[indexPath.row];
         NSArray *dataList = dict[@"dataList"];
-        [self showPickerViewWithDataList:dataList];
+        // 第一种方式：通过自定义配置 显示选择控制器，推荐
+        [self showPickerViewByConfigWithDataList:dataList];
+        
+        // 第二种方式：通过自定义属性 显示选择控制器
+//        [self showPickerViewByPropertyWithDataList:dataList];
     }
 }
 
@@ -76,8 +80,63 @@
     return 44.0f;
 }
 
-#pragma mark 显示选择控制器
-- (void)showPickerViewWithDataList:(NSArray *)dataList
+#pragma mark 第一种方式：通过自定义配置 显示选择控制器
+- (void)showPickerViewByConfigWithDataList:(NSArray *)dataList
+{
+    // 1.Custom propery（自定义配置）
+    ZJPickerViewConfig *config = [[ZJPickerViewConfig alloc] init];
+    
+    config.maskAlpha = 0.5f;
+    config.isTouchMaskHide = YES;
+    
+    config.pickerViewHeight = 300.0f;
+    config.rowHeight = 44.0f;
+    config.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+    config.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+    if (@available(iOS 14.0, *)) {
+        config.separatorColor = [[UIColor redColor] colorWithAlphaComponent:0.12];
+    } else {
+        config.separatorColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    }
+    config.isScrollToSelectedRow = YES;
+    config.sureBtnTitle = @"完成";
+    config.sureTextColor = [UIColor orangeColor];
+    config.sureTextFont = [UIFont systemFontOfSize:17.0];
+    
+    config.cancelBtnTitle = @"取消呀";
+    config.cancelTextColor = [UIColor grayColor];
+    config.cancelTextFont = [UIFont systemFontOfSize:17.0];
+    
+    config.titleLabelText = [_selectContentLabel.text substringFromIndex:5];
+    config.titleTextColor = [UIColor darkTextColor];
+    config.titleTextFont = [UIFont systemFontOfSize:17.0];
+    config.titleLineColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    config.dividedSymbol = @".";
+    config.isDividedSelectContent = YES;
+    config.isShowSelectContent = YES;
+    config.hiddenTitleLabel = NO;
+    
+    config.isAnimationShow = YES;
+    
+    // 2.Show（显示）
+    __weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel;
+    [ZJPickerView zj_showWithDataList:dataList config:config completion:^(NSString *selectContent) {
+        NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+
+        // show select content
+        NSArray *selectStrings = [selectContent componentsSeparatedByString:@","];
+        NSMutableString *selectStringCollection = [[NSMutableString alloc] initWithString:@"选择内容："];
+        [selectStrings enumerateObjectsUsingBlock:^(NSString *selectString, NSUInteger idx, BOOL * _Nonnull stop) {
+            if (selectString.length && ![selectString isEqualToString:@""]) {
+                [selectStringCollection appendString:selectString];
+            }
+        }];
+        weak_selectContentLabel.text = selectStringCollection;
+    }];
+}
+
+#pragma mark 第二种方式：通过自定义属性 显示选择控制器
+- (void)showPickerViewByPropertyWithDataList:(NSArray *)dataList
 {
     // 1.Custom propery（自定义属性，根据需要添加想要的属性。PS：如果在多个地方使用到自定义弹框，建议把propertyDict定义为一个宏或全局变量）
     NSDictionary *propertyDict = @{
@@ -126,7 +185,7 @@
 - (void)initDataAndSubViews
 {
     // 1.选择内容(selected content)
-    _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(self.navigationController.navigationBar.frame), self.view.frame.size.width, 44.0f)];
+    _selectContentLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, [UIApplication sharedApplication].statusBarFrame.size.height + 44.0f, self.view.frame.size.width, 44.0f)];
     _selectContentLabel.text = @"选择内容：";
     _selectContentLabel.textColor = [UIColor brownColor];
     _selectContentLabel.font = [UIFont systemFontOfSize:17.0f];

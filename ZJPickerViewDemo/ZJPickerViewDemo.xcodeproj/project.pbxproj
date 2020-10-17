@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		60BF0113253ACBAE0040F70C /* ZJPickerViewProperty.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BF0112253ACBAE0040F70C /* ZJPickerViewProperty.m */; };
+		60BF011F253ADFC80040F70C /* ZJPickerViewConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 60BF011E253ADFC80040F70C /* ZJPickerViewConfig.m */; };
 		9A0E92A5200C48E2004A5879 /* CityData2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9A0E92A4200C48E2004A5879 /* CityData2.plist */; };
 		9A693BD5200C533C00E88E41 /* UIColor+ZJ.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A693BD4200C533C00E88E41 /* UIColor+ZJ.m */; };
 		9A693BD9200CB8D100E88E41 /* ZJPickerViewModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 9A693BD8200CB8D100E88E41 /* ZJPickerViewModel.m */; };
@@ -41,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		60BF0111253ACBAE0040F70C /* ZJPickerViewProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZJPickerViewProperty.h; sourceTree = "<group>"; };
+		60BF0112253ACBAE0040F70C /* ZJPickerViewProperty.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZJPickerViewProperty.m; sourceTree = "<group>"; };
+		60BF011D253ADFC80040F70C /* ZJPickerViewConfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZJPickerViewConfig.h; sourceTree = "<group>"; };
+		60BF011E253ADFC80040F70C /* ZJPickerViewConfig.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZJPickerViewConfig.m; sourceTree = "<group>"; };
 		9A0E92A4200C48E2004A5879 /* CityData2.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = CityData2.plist; sourceTree = "<group>"; };
 		9A693BD3200C533C00E88E41 /* UIColor+ZJ.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIColor+ZJ.h"; sourceTree = "<group>"; };
 		9A693BD4200C533C00E88E41 /* UIColor+ZJ.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIColor+ZJ.m"; sourceTree = "<group>"; };
@@ -160,6 +166,10 @@
 			children = (
 				9ABC75902240EB3A00730C94 /* ZJPickerView.h */,
 				9ABC75912240EB3A00730C94 /* ZJPickerView.m */,
+				60BF0111253ACBAE0040F70C /* ZJPickerViewProperty.h */,
+				60BF0112253ACBAE0040F70C /* ZJPickerViewProperty.m */,
+				60BF011D253ADFC80040F70C /* ZJPickerViewConfig.h */,
+				60BF011E253ADFC80040F70C /* ZJPickerViewConfig.m */,
 			);
 			name = ZJPickerView;
 			path = ../../ZJPickerView;
@@ -306,6 +316,8 @@
 				9ABC75922240EB3A00730C94 /* ZJPickerView.m in Sources */,
 				9A693BD5200C533C00E88E41 /* UIColor+ZJ.m in Sources */,
 				9A7EB23D2008B6E700A991E2 /* main.m in Sources */,
+				60BF0113253ACBAE0040F70C /* ZJPickerViewProperty.m in Sources */,
+				60BF011F253ADFC80040F70C /* ZJPickerViewConfig.m in Sources */,
 				9A7EB22F2008B6E700A991E2 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

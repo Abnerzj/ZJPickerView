@@ -11,75 +11,20 @@
 
 #import "ZJPickerView.h"
 
-// content: NSString type
-NSString * const ZJPickerViewPropertyCanceBtnTitleKey = @"ZJPickerViewPropertyCanceBtnTitleKey";
-NSString * const ZJPickerViewPropertySureBtnTitleKey = @"ZJPickerViewPropertySureBtnTitleKey";
-NSString * const ZJPickerViewPropertyTipLabelTextKey = @"ZJPickerViewPropertyTipLabelTextKey";
-NSString * const ZJPickerViewPropertyDividedSymbolKey = @"ZJPickerViewPropertyDividedSymbolKey";
-
-// color: UIColor type
-NSString * const ZJPickerViewPropertyCanceBtnTitleColorKey = @"ZJPickerViewPropertyCanceBtnTitleColorKey";
-NSString * const ZJPickerViewPropertySureBtnTitleColorKey = @"ZJPickerViewPropertySureBtnTitleColorKey";
-NSString * const ZJPickerViewPropertyTipLabelTextColorKey = @"ZJPickerViewPropertyTipLabelTextColorKey";
-NSString * const ZJPickerViewPropertyLineViewBackgroundColorKey = @"ZJPickerViewPropertyLineViewBackgroundColorKey";
-
-// font: UIFont type
-NSString * const ZJPickerViewPropertyCanceBtnTitleFontKey = @"ZJPickerViewPropertyCanceBtnTitleFontKey";
-NSString * const ZJPickerViewPropertySureBtnTitleFontKey = @"ZJPickerViewPropertySureBtnTitleFontKey";
-NSString * const ZJPickerViewPropertyTipLabelTextFontKey = @"ZJPickerViewPropertyTipLabelTextFontKey";
-
-// pickerView:
-// CGFloat type
-NSString * const ZJPickerViewPropertyPickerViewHeightKey = @"ZJPickerViewPropertyPickerViewHeightKey";
-NSString * const ZJPickerViewPropertyOneComponentRowHeightKey = @"ZJPickerViewPropertyOneComponentRowHeightKey";
-// NSDictionary type
-NSString * const ZJPickerViewPropertySelectRowTitleAttrKey = @"ZJPickerViewPropertySelectRowTitleAttrKey";
-NSString * const ZJPickerViewPropertyUnSelectRowTitleAttrKey = @"ZJPickerViewPropertyUnSelectRowTitleAttrKey";
-// UIColor type
-NSString * const ZJPickerViewPropertySelectRowLineBackgroundColorKey = @"ZJPickerViewPropertySelectRowLineBackgroundColorKey";
-
-// other:
-// BOOL type
-NSString * const ZJPickerViewPropertyIsTouchBackgroundHideKey = @"ZJPickerViewPropertyIsTouchBackgroundHideKey";
-NSString * const ZJPickerViewPropertyIsShowTipLabelKey = @"ZJPickerViewPropertyIsShowTipLabelKey";
-NSString * const ZJPickerViewPropertyIsShowSelectContentKey = @"ZJPickerViewPropertyIsShowSelectContentKey";
-NSString * const ZJPickerViewPropertyIsScrollToSelectedRowKey = @"ZJPickerViewPropertyIsScrollToSelectedRowKey";
-NSString * const ZJPickerViewPropertyIsDividedSelectContentKey = @"ZJPickerViewPropertyIsDividedSelectContentKey";
-NSString * const ZJPickerViewPropertyIsAnimationShowKey = @"ZJPickerViewPropertyIsAnimationShowKey";
-// CGFloat type
-NSString * const ZJPickerViewPropertyBackgroundAlphaKey = @"ZJPickerViewPropertyBackgroundAlphaKey";
-
 static const CGFloat toolViewHeight = 44.0f; // tool view height
 static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button height
-static NSString * const kDividedSymbol = @","; // divided symbol
 
 @interface ZJPickerView ()<UIPickerViewDataSource, UIPickerViewDelegate>
 
 // property
 @property (nonatomic, strong) NSMutableArray *dataList; // data list
-@property (nonatomic, strong) NSMutableDictionary *propertyDict; // property dictionary
-
-// pickerView
-@property (nonatomic, assign) NSUInteger component; // component numbers, default 0
-@property (nonatomic, assign) CGFloat pickerViewHeight; // pickerView height, default 224 pt
-@property (nonatomic, assign) CGFloat oneComponentRowHeight; // one component row height, default 32 pt
-@property (nonatomic, strong) NSDictionary *selectRowTitleAttribute; // select row titlt attribute
-@property (nonatomic, strong) NSDictionary *unSelectRowTitleAttribute; // unSelect row titlt attribute
-@property (nonatomic, strong) UIColor *selectRowLineBackgroundColor; // select row top and bottom line backgroundColor
-@property (nonatomic, copy) NSString *dividedSymbol; // divided symbol, default commas
-
-@property (nonatomic, assign) BOOL isTouchBackgroundHide; // touch background is hide, default NO
-@property (nonatomic, assign) BOOL isShowTipLabel; // is show tipLabel, default NO.
-@property (nonatomic, assign) BOOL isShowSelectContent; // scroll component is update and show select content in tipLabel, default NO
-@property (nonatomic, assign) BOOL isScrollToSelectedRow; // pickerView will show scroll to selected row, default NO
-@property (nonatomic, assign) BOOL isDividedSelectContent; // select content is divided, default NO
-@property (nonatomic, assign) BOOL isAnimationShow; // show pickerView is need Animation, default YES
-@property (nonatomic, assign) BOOL isSettedSelectRowLineBackgroundColor; // is setted select row top and bottom line backgroundColor, default NO
-@property (nonatomic, assign) CGFloat backgroundAlpha; // background alpha, default 0.5(0.0~1.0)
+@property (nonatomic, strong) ZJPickerViewConfig *config; // custom style
 @property (nonatomic, copy) void(^completion)(NSString * _Nullable  selectContent); // select content
+@property (nonatomic, assign) NSUInteger component; // component numbers, default 0
+@property (nonatomic, assign) BOOL isSettedSelectRowLineBackgroundColor; // is setted select row top and bottom line backgroundColor, default NO
 
 // subviews
-@property (nonatomic, strong) UIView *backgroundView;
+@property (nonatomic, strong) UIView *maskView;
 @property (nonatomic, strong) UIView *contentView;
 @property (nonatomic, strong) UIPickerView *pickerView;
 @property (nonatomic, strong) UIButton *canceBtn;
@@ -101,9 +46,8 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 #pragma mark - Instance Methods
 - (instancetype)initWithFrame:(CGRect)frame {
     if((self = [super initWithFrame:frame])) {
-        [self initDefaultConfig];
         self.dataList = [NSMutableArray array];
-        self.propertyDict = [NSMutableDictionary dictionary];
+        self.config = [ZJPickerViewConfig defaultConfig];
         [self initSubViews];
     }
     return self;
@@ -112,41 +56,31 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 - (void)initDefaultConfig
 {
     self.component = 0;
-    self.pickerViewHeight = 224.0f;
-    self.oneComponentRowHeight = 32.0f;
-    self.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
-    self.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
-    if (@available(iOS 14.0, *)) {
-        self.selectRowLineBackgroundColor = [UIColor tertiarySystemFillColor];
-    } else {
-        self.selectRowLineBackgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
-    }
-    self.dividedSymbol = kDividedSymbol;
-    
-    self.isTouchBackgroundHide = NO;
-    self.isShowTipLabel = NO;
-    self.isShowSelectContent = NO;
-    self.isScrollToSelectedRow = NO;
-    self.isDividedSelectContent = NO;
-    self.isAnimationShow = YES;
     self.isSettedSelectRowLineBackgroundColor = NO;
-    self.backgroundAlpha = 0.5f;
+    [self.config resetConfig];
+}
+
+- (void)resetData
+{
+    self.tipLabel.text = @"";
+    [self.dataList removeAllObjects];
+    self.config = nil;
 }
 
 - (void)initSubViews
 {
     // background view
-    UIView *backgroundView = [[UIView alloc] initWithFrame:self.bounds];
-    backgroundView.backgroundColor = [UIColor blackColor];
-    backgroundView.alpha = self.backgroundAlpha;
-    [self addSubview:backgroundView];
+    UIView *maskView = [[UIView alloc] initWithFrame:self.bounds];
+    maskView.backgroundColor = [UIColor blackColor];
+    maskView.alpha = self.config.maskAlpha;
+    [self addSubview:maskView];
     
     // add tap Gesture
-    UITapGestureRecognizer *tapbgGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(touchBackgroundView)];
-    [backgroundView addGestureRecognizer:tapbgGesture];
+    UITapGestureRecognizer *tapbgGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(touchMaskView)];
+    [maskView addGestureRecognizer:tapbgGesture];
     
     // content view
-    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - toolViewHeight - self.pickerViewHeight, self.frame.size.width, toolViewHeight + self.pickerViewHeight)];
+    UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height - toolViewHeight - self.config.pickerViewHeight, self.frame.size.width, toolViewHeight + self.config.pickerViewHeight)];
     contentView.backgroundColor = [UIColor whiteColor];
     [self addSubview:contentView];
     
@@ -156,12 +90,11 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     [contentView addSubview:toolView];
     
     // cance button
-    NSArray *diffLanguageTitles = [self getDiffLanguageCanceAndSureBtnTitles];
     UIButton *canceBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     canceBtn.frame = CGRectMake(0, 0, canceBtnWidth, toolView.frame.size.height);
-    [canceBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
-    [canceBtn setTitle:diffLanguageTitles.firstObject forState:UIControlStateNormal];
-    [canceBtn.titleLabel setFont:[UIFont systemFontOfSize:17.0]];
+    [canceBtn setTitleColor:self.config.cancelTextColor forState:UIControlStateNormal];
+    [canceBtn setTitle:self.config.cancelBtnTitle forState:UIControlStateNormal];
+    [canceBtn.titleLabel setFont:self.config.cancelTextFont];
     [canceBtn setTag:0];
     [canceBtn addTarget:self action:@selector(userAction:) forControlEvents:UIControlEventTouchUpInside];
     [toolView addSubview:canceBtn];
@@ -169,35 +102,35 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     // sure button
     UIButton *sureBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     sureBtn.frame = CGRectMake(toolView.frame.size.width - canceBtnWidth, 0, canceBtnWidth, toolView.frame.size.height);
-    [sureBtn setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    [sureBtn setTitle:diffLanguageTitles.lastObject forState:UIControlStateNormal];
-    [sureBtn.titleLabel setFont:[UIFont systemFontOfSize:17.0]];
+    [sureBtn setTitleColor:kZJPickerViewDefaultThemeColor forState:UIControlStateNormal];
+    [sureBtn setTitle:self.config.sureBtnTitle forState:UIControlStateNormal];
+    [sureBtn.titleLabel setFont:self.config.sureTextFont];
     [sureBtn setTag:1];
     [sureBtn addTarget:self action:@selector(userAction:) forControlEvents:UIControlEventTouchUpInside];
     [toolView addSubview:sureBtn];
     
     // center title
     UILabel *tipLabel = [[UILabel alloc] initWithFrame:CGRectMake(canceBtn.frame.size.width, 0, toolView.frame.size.width - canceBtn.frame.size.width*2, toolView.frame.size.height)];
-    tipLabel.text = @"";
-    tipLabel.textColor = [UIColor darkTextColor];
-    tipLabel.font = [UIFont systemFontOfSize:17.0];
+    tipLabel.text = self.config.titleLabelText;
+    tipLabel.textColor = self.config.titleTextColor;
+    tipLabel.font = self.config.titleTextFont;
     tipLabel.textAlignment = NSTextAlignmentCenter;
-    tipLabel.hidden = !self.isShowTipLabel;
+    tipLabel.hidden = self.config.hiddenTitleLabel;
     [toolView addSubview:tipLabel];
     
     // line view
     UIView *lineView = [[UIView alloc] initWithFrame:CGRectMake(0, toolView.frame.size.height - 0.5f, self.frame.size.width, 0.5f)];
-    lineView.backgroundColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+    lineView.backgroundColor = self.config.titleLineColor;
     [toolView addSubview:lineView];
     
     // pickerView
-    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, toolView.frame.size.height, self.frame.size.width, self.pickerViewHeight)];
+    UIPickerView *pickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0, toolView.frame.size.height, self.frame.size.width, self.config.pickerViewHeight)];
     pickerView.dataSource = self;
     pickerView.delegate = self;
     [contentView addSubview:pickerView];
     
     // global variable
-    self.backgroundView = backgroundView;
+    self.maskView = maskView;
     self.contentView = contentView;
     self.canceBtn = canceBtn;
     self.sureBtn = sureBtn;
@@ -245,7 +178,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
             [pickerView selectRow:0 inComponent:i animated:YES];
         }
         
-        if (self.isShowSelectContent) {
+        if (self.config.isShowSelectContent) {
             [selectString appendString:[self pickerView:pickerView titleForRow:[pickerView selectedRowInComponent:i] forComponent:i]];
             if (i == self.component - 1) {
                 self.tipLabel.text = selectString;
@@ -256,7 +189,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView rowHeightForComponent:(NSInteger)component
 {
-    return self.oneComponentRowHeight;
+    return self.config.rowHeight;
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
@@ -267,11 +200,11 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     if (NO == self.isSettedSelectRowLineBackgroundColor) {
         for (UIView *singleLine in pickerView.subviews) {
             if (singleLine.frame.size.height < 1.0f) { // under iOS 13, height = 0.5f;
-                singleLine.backgroundColor = self.selectRowLineBackgroundColor;
+                singleLine.backgroundColor = self.config.separatorColor;
                 self.isSettedSelectRowLineBackgroundColor = YES;
             }
             else if (singleLine.frame.size.height == 42.0f) { // iOS 14+, select
-                singleLine.backgroundColor = self.selectRowLineBackgroundColor;
+                singleLine.backgroundColor = self.config.separatorColor;
                 self.isSettedSelectRowLineBackgroundColor = YES;
             }
         }
@@ -298,9 +231,9 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     NSString *normalRowString = [self pickerView:pickerView titleForRow:row forComponent:component];
     NSString *selectRowString = [self pickerView:pickerView titleForRow:[pickerView selectedRowInComponent:component] forComponent:component];
     if (row == [pickerView selectedRowInComponent:component]) {
-        return [[NSAttributedString alloc] initWithString:selectRowString attributes:self.selectRowTitleAttribute];
+        return [[NSAttributedString alloc] initWithString:selectRowString attributes:self.config.selectRowTitleAttribute];
     } else {
-        return [[NSAttributedString alloc] initWithString:normalRowString attributes:self.unSelectRowTitleAttribute];
+        return [[NSAttributedString alloc] initWithString:normalRowString attributes:self.config.unSelectRowTitleAttribute];
     }
 }
 
@@ -316,7 +249,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
         for (NSUInteger i = 0; i < self.component; i++) {
             [selectString appendString:[self pickerView:self.pickerView titleForRow:[self.pickerView selectedRowInComponent:i] forComponent:i]];
             if (i != self.component - 1) { // 多行用 "," 分割
-                [selectString appendString:self.dividedSymbol];
+                [selectString appendString:self.config.dividedSymbol];
             }
         }
         
@@ -327,17 +260,17 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     }
 }
 
-#pragma mark touch backgroundView
-- (void)touchBackgroundView
+#pragma mark touch maskView
+- (void)touchMaskView
 {
-    if (self.isTouchBackgroundHide) {
+    if (self.config.isTouchMaskHide) {
         [self zj_hide];
     }
 }
 
 #pragma mark - show & hide method
 + (void)zj_showWithDataList:(nonnull NSArray *)dataList
-               propertyDict:(nullable NSDictionary *)propertyDict
+                     config:(nullable ZJPickerViewConfig *)config
                  completion:(nullable void(^)(NSString * _Nullable selectContent))completion
 {
     // no data
@@ -347,12 +280,9 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     
     // handle data
     [[self sharedView] initDefaultConfig];
-    [self sharedView].tipLabel.text = @"";
-    [[self sharedView].dataList removeAllObjects];
     [[self sharedView].dataList addObjectsFromArray:dataList];
-    [[self sharedView].propertyDict removeAllObjects];
-    [[self sharedView].propertyDict addEntriesFromDictionary:propertyDict];
-    [[self sharedView] updateCustomProperiesSetter];
+    [[self sharedView] setConfig:config ?: [ZJPickerViewConfig defaultConfig]];
+    [[self sharedView] updateCustomProperiesConfig];
      
     // calculate component num
     id data = dataList.firstObject;
@@ -371,7 +301,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     // scorll all component to selectedRow/top
     dispatch_async(dispatch_get_main_queue(), ^{
         [[self sharedView].pickerView reloadAllComponents];
-        if ([self sharedView].isScrollToSelectedRow) {
+        if ([self sharedView].config.isScrollToSelectedRow) {
             [[self sharedView] scrollToSelectedRow];
         } else {
             for (NSUInteger i = 0; i < [self sharedView].component; i++) {
@@ -386,21 +316,20 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     }
     
     // show
-    if ([self sharedView].isAnimationShow) {
+    if ([self sharedView].config.isAnimationShow) {
         [[[[UIApplication sharedApplication] delegate] window] addSubview:[self sharedView]];
         
-        [self sharedView].backgroundView.alpha = 0.0f;
+        [self sharedView].maskView.alpha = 0.0f;
         
         CGRect frame = [self sharedView].contentView.frame;
         frame.origin.y = [self sharedView].frame.size.height;
         [self sharedView].contentView.frame = frame;
         
-        __weak typeof(self) weakself = self;
         [UIView animateWithDuration:0.3f animations:^{
-            CGRect frame = [weakself sharedView].contentView.frame;
-            frame.origin.y = [weakself sharedView].frame.size.height - [weakself sharedView].contentView.frame.size.height;
-            [weakself sharedView].contentView.frame = frame;
-            [weakself sharedView].backgroundView.alpha = [weakself sharedView].backgroundAlpha;
+            CGRect frame = [self sharedView].contentView.frame;
+            frame.origin.y = [self sharedView].frame.size.height - [self sharedView].contentView.frame.size.height;
+            [self sharedView].contentView.frame = frame;
+            [self sharedView].maskView.alpha = [self sharedView].config.maskAlpha;
         }];
     } else {
         [UIView animateWithDuration:0.3f animations:^{
@@ -409,21 +338,29 @@ static NSString * const kDividedSymbol = @","; // divided symbol
     }
 }
 
++ (void)zj_showWithDataList:(nonnull NSArray *)dataList
+               propertyDict:(nullable NSDictionary *)propertyDict
+                 completion:(nullable void(^)(NSString * _Nullable selectContent))completion
+{
+    [self zj_showWithDataList:dataList config:[ZJPickerViewConfig configWithPropertyDict:propertyDict] completion:completion];
+}
+
 - (void)zj_hide
 {
-    __weak typeof(self) weakself = self;
-    if (self.isAnimationShow) {
+    if (self.config.isAnimationShow) {
         CGRect frame = self.contentView.frame;
         frame.origin.y = self.frame.size.height;
         [UIView animateWithDuration:0.3f animations:^{
-            weakself.contentView.frame = frame;
-            weakself.backgroundView.alpha = 0.0f;
+            self.contentView.frame = frame;
+            self.maskView.alpha = 0.0f;
         } completion:^(BOOL finished) {
-            [weakself removeFromSuperview];
+            [self resetData];
+            [self removeFromSuperview];
         }];
     } else {
         [UIView animateWithDuration:0.3f animations:^{
-            [weakself removeFromSuperview];
+            [self resetData];
+            [self removeFromSuperview];
         }];
     }
 }
@@ -482,88 +419,47 @@ static NSString * const kDividedSymbol = @","; // divided symbol
 }
 
 #pragma mark update property
-- (void)updateCustomProperiesSetter
+- (void)updateCustomProperiesConfig
 {
-    [self.propertyDict enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
-        if (obj) {
-            if ([key isEqualToString:ZJPickerViewPropertyCanceBtnTitleKey]) {
-                [self.canceBtn setTitle:obj forState:UIControlStateNormal];
-            } else if ([key isEqualToString:ZJPickerViewPropertySureBtnTitleKey]) {
-                [self.sureBtn setTitle:obj forState:UIControlStateNormal];
-            } else if ([key isEqualToString:ZJPickerViewPropertyTipLabelTextKey]) {
-                self.tipLabel.text = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyDividedSymbolKey]) {
-                self.dividedSymbol = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyCanceBtnTitleColorKey]) {
-                [self.canceBtn setTitleColor:obj forState:UIControlStateNormal];
-            } else if ([key isEqualToString:ZJPickerViewPropertySureBtnTitleColorKey]) {
-                [self.sureBtn setTitleColor:obj forState:UIControlStateNormal];
-            } else if ([key isEqualToString:ZJPickerViewPropertyTipLabelTextColorKey]) {
-                self.tipLabel.textColor = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyLineViewBackgroundColorKey]) {
-                self.lineView.backgroundColor = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyCanceBtnTitleFontKey]) {
-                [self.canceBtn.titleLabel setFont:obj];
-            } else if ([key isEqualToString:ZJPickerViewPropertySureBtnTitleFontKey]) {
-                [self.sureBtn.titleLabel setFont:obj];
-            } else if ([key isEqualToString:ZJPickerViewPropertyTipLabelTextFontKey]) {
-                [self.tipLabel setFont:obj];
-            } else if ([key isEqualToString:ZJPickerViewPropertyPickerViewHeightKey]) {
-                self.pickerViewHeight = [obj floatValue];
-                CGRect frame = self.pickerView.frame;
-                frame.size.height = self.pickerViewHeight;
-                self.pickerView.frame = frame;
-                
-                frame = self.contentView.frame;
-                frame.size.height = toolViewHeight + self.pickerViewHeight;
-                frame.origin.y = self.frame.size.height - frame.size.height;
-                self.contentView.frame = frame;
-            } else if ([key isEqualToString:ZJPickerViewPropertyOneComponentRowHeightKey]) {
-                self.oneComponentRowHeight = [obj floatValue];
-            } else if ([key isEqualToString:ZJPickerViewPropertySelectRowTitleAttrKey]) {
-                self.selectRowTitleAttribute = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyUnSelectRowTitleAttrKey]) {
-                self.unSelectRowTitleAttribute = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertySelectRowLineBackgroundColorKey]) {
-                self.selectRowLineBackgroundColor = obj;
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsTouchBackgroundHideKey]) {
-                self.isTouchBackgroundHide = [obj boolValue];
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsShowTipLabelKey]) {
-                self.isShowTipLabel = [obj boolValue]; // NO
-                self.tipLabel.hidden = self.isShowSelectContent ? NO : !self.isShowTipLabel;
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsShowSelectContentKey]) {
-                self.isShowSelectContent = [obj boolValue]; // NO
-                if (self.isShowSelectContent) {
-                    self.tipLabel.hidden = NO;
-                }
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsScrollToSelectedRowKey]) {
-                self.isScrollToSelectedRow = [obj boolValue];
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsDividedSelectContentKey]) {
-                self.isDividedSelectContent = [obj boolValue];
-            } else if ([key isEqualToString:ZJPickerViewPropertyBackgroundAlphaKey]) {
-                self.backgroundAlpha = [obj floatValue];
-                self.backgroundView.alpha = self.backgroundAlpha;
-            } else if ([key isEqualToString:ZJPickerViewPropertyIsAnimationShowKey]) {
-                self.isAnimationShow = [obj boolValue];
-            }
-        }
-    }];
+    self.maskView.alpha = self.config.maskAlpha;
+    
+    CGRect frame = self.pickerView.frame;
+    frame.size.height = self.config.pickerViewHeight;
+    self.pickerView.frame = frame;
+    frame = self.contentView.frame;
+    frame.size.height = toolViewHeight + self.config.pickerViewHeight;
+    frame.origin.y = self.frame.size.height - frame.size.height;
+    self.contentView.frame = frame;
+    
+    
+    [self.canceBtn setTitle:self.config.cancelBtnTitle forState:UIControlStateNormal];
+    [self.canceBtn setTitleColor:self.config.cancelTextColor forState:UIControlStateNormal];
+    [self.canceBtn.titleLabel setFont:self.config.cancelTextFont];
+    
+    [self.sureBtn setTitle:self.config.sureBtnTitle forState:UIControlStateNormal];
+    [self.sureBtn setTitleColor:self.config.sureTextColor forState:UIControlStateNormal];
+    [self.sureBtn.titleLabel setFont:self.config.sureTextFont];
+    
+    self.tipLabel.text = self.config.titleLabelText;
+    self.tipLabel.textColor = self.config.titleTextColor;
+    self.tipLabel.font = self.config.titleTextFont;
+    self.tipLabel.hidden = self.config.hiddenTitleLabel;
 }
 
 - (void)scrollToSelectedRow
 {
-    NSString *selectedContent = self.propertyDict[ZJPickerViewPropertyTipLabelTextKey];
+    NSString *selectedContent = self.config.titleLabelText;
     NSMutableArray *selectContentList = [NSMutableArray arrayWithCapacity:self.component];
-    if (self.isDividedSelectContent) {
+    if (self.config.isDividedSelectContent) {
         // reference: https://github.com/Abnerzj/ZJPickerView/issues/8
-        NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:self.dividedSymbol];
+        NSArray *tempSelectContentList = [selectedContent componentsSeparatedByString:self.config.dividedSymbol];
         if (tempSelectContentList && tempSelectContentList.count == self.component) {
             [selectContentList addObjectsFromArray:tempSelectContentList];
         }
     }
+    NSMutableArray *tempSelectedRowArray = [NSMutableArray arrayWithCapacity:self.component];
     if (selectedContent.length && ![selectedContent isEqualToString:@""]) {
         __weak typeof(self) weakself = self;
-        NSMutableArray *tempSelectedRowArray = [NSMutableArray arrayWithCapacity:self.component];
         for (NSUInteger i = 0; i < self.component; i++) {
             NSArray *componentArray = [self getDataWithComponent:i];
             if (componentArray.count) {
@@ -597,31 +493,13 @@ static NSString * const kDividedSymbol = @","; // divided symbol
                 }];
             }
         }
-        
-        if (tempSelectedRowArray.count != self.component) {
-            for (NSUInteger i = 0; i < self.component; i++) {
-                [self.pickerView selectRow:0 inComponent:i animated:NO];
-            }
+    }
+    if (tempSelectedRowArray.count != self.component) {
+        for (NSUInteger i = 0; i < self.component; i++) {
+            [self.pickerView selectRow:0 inComponent:i animated:NO];
         }
+        self.tipLabel.text = @"";
     }
-}
-
-- (NSArray *)getDiffLanguageCanceAndSureBtnTitles
-{
-    NSString *languageName = [[[NSUserDefaults standardUserDefaults] objectForKey:@"AppleLanguages"] objectAtIndex:0];
-    
-    // 简体中文
-    if ([languageName rangeOfString:@"zh-Hans"].location != NSNotFound) {
-        return @[@"取消", @"确定"];
-    }
-    
-    // 繁体中文
-    if ([languageName rangeOfString:@"zh-Hant"].location != NSNotFound) {
-        return @[@"取消", @"確定"];
-    }
-    
-    // Other language
-    return @[@"Cance", @"Sure"];
 }
 
 @end

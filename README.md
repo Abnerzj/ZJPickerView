@@ -39,17 +39,83 @@ pod 'ZJPickerView'
 ```objc
 ZJPickerView.h
 ZJPickerView.m
+ZJPickerViewProperty.h
+ZJPickerViewProperty.m
+ZJPickerViewConfig.h
+ZJPickerViewConfig.m
 ```
 
 # Examples【示例】
 ## Direct Use【直接使用】
 ```objc
+// 第一种方式：通过自定义配置
+[ZJPickerView zj_showWithDataList:@[@"IT", @"销售", @"自媒体", @"游戏主播", @"产品策划"] config:nil completion:^(NSString *selectContent) {
+    NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+}];
+
+// 第二种方式：通过自定义属性
 [ZJPickerView zj_showWithDataList:@[@"IT", @"销售", @"自媒体", @"游戏主播", @"产品策划"] propertyDict:nil completion:^(NSString *selectContent) {
     NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
 }];
 ```
 ## User-defined properties【自定义想要的PickerView】
+### 第一种方式：通过自定义配置
 ```objc
+ZJPickerViewConfig *config = [[ZJPickerViewConfig alloc] init];
+
+config.maskAlpha = 0.5f;
+config.isTouchMaskHide = YES;
+
+config.pickerViewHeight = 300.0f;
+config.rowHeight = 44.0f;
+config.selectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor orangeColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+config.unSelectRowTitleAttribute = @{NSForegroundColorAttributeName : [UIColor lightGrayColor], NSFontAttributeName : [UIFont systemFontOfSize:20.0f]};
+if (@available(iOS 14.0, *)) {
+    config.separatorColor = [[UIColor redColor] colorWithAlphaComponent:0.12];
+} else {
+    config.separatorColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+}
+config.isScrollToSelectedRow = YES;
+config.sureBtnTitle = @"完成";
+config.sureTextColor = [UIColor orangeColor];
+config.sureTextFont = [UIFont systemFontOfSize:17.0];
+
+config.cancelBtnTitle = @"取消呀";
+config.cancelTextColor = [UIColor grayColor];
+config.cancelTextFont = [UIFont systemFontOfSize:17.0];
+
+config.titleLabelText = [_selectContentLabel.text substringFromIndex:5];
+config.titleTextColor = [UIColor darkTextColor];
+config.titleTextFont = [UIFont systemFontOfSize:17.0];
+config.titleLineColor = [UIColor colorWithRed:222.0/255.0 green:222.0/255.0 blue:222.0/255.0 alpha:1.0];
+config.dividedSymbol = @".";
+config.isDividedSelectContent = YES;
+config.isShowSelectContent = YES;
+config.hiddenTitleLabel = NO;
+
+config.isAnimationShow = YES;
+
+// 2.Show（显示）
+__weak typeof(_selectContentLabel) weak_selectContentLabel = _selectContentLabel;
+[ZJPickerView zj_showWithDataList:dataList config:config completion:^(NSString *selectContent) {
+    NSLog(@"ZJPickerView log tip：---> selectContent:%@", selectContent);
+
+    // show select content
+    NSArray *selectStrings = [selectContent componentsSeparatedByString:@","];
+    NSMutableString *selectStringCollection = [[NSMutableString alloc] initWithString:@"选择内容："];
+    [selectStrings enumerateObjectsUsingBlock:^(NSString *selectString, NSUInteger idx, BOOL * _Nonnull stop) {
+        if (selectString.length && ![selectString isEqualToString:@""]) {
+            [selectStringCollection appendString:selectString];
+        }
+    }];
+    weak_selectContentLabel.text = selectStringCollection;
+}];
+```
+
+```objc
+
+
+// 第二种方式：通过自定义属性
 // 支持的属性列表
 // content: NSString type
 extern NSString * _Nonnull const ZJPickerViewPropertyCanceBtnTitleKey; // cance button Title（取消按钮）
@@ -88,8 +154,8 @@ extern NSString * _Nonnull const ZJPickerViewPropertyIsDividedSelectContentKey; 
 extern NSString * _Nonnull const ZJPickerViewPropertyIsAnimationShowKey;  // show pickerView is need Animation, default YES（显示pickerView时是否带动画效果）
 // CGFloat type
 extern NSString * _Nonnull const ZJPickerViewPropertyBackgroundAlphaKey;  // background alpha, default 0.5(0.0~1.0)（背景视图透明度）
-```
-```objc
+
+
 // 使用
 // 1.Custom propery（自定义属性，根据需要添加想要的属性。PS：如果在多个地方使用到自定义弹框，建议把propertyDict定义为一个宏或全局变量）
 NSDictionary *propertyDict = @{ZJPickerViewPropertyCanceBtnTitleKey : @"取消",
