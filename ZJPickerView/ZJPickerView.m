@@ -444,6 +444,8 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
     self.tipLabel.textColor = self.config.titleTextColor;
     self.tipLabel.font = self.config.titleTextFont;
     self.tipLabel.hidden = self.config.hiddenTitleLabel;
+    
+    self.lineView.backgroundColor = self.config.titleLineColor;
 }
 
 - (void)scrollToSelectedRow
@@ -498,7 +500,6 @@ static const CGFloat canceBtnWidth = 68.0f; // cance button or sure button heigh
         for (NSUInteger i = 0; i < self.component; i++) {
             [self.pickerView selectRow:0 inComponent:i animated:NO];
         }
-        self.tipLabel.text = @"";
     }
 }
 
