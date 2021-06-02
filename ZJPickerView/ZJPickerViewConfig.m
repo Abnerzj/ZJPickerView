@@ -71,7 +71,7 @@ static NSString * const kDividedSymbol = @","; // divided symbol
             } else if ([key isEqualToString:ZJPickerViewPropertyIsTouchBackgroundHideKey]) {
                 config.isTouchMaskHide = [obj boolValue];
             } else if ([key isEqualToString:ZJPickerViewPropertyIsShowTipLabelKey]) {
-                config.hiddenTitleLabel = [obj boolValue];
+                config.hiddenTitleLabel = ![obj boolValue];
                 if (config.isShowSelectContent) {
                     config.hiddenTitleLabel = NO;
                 }
